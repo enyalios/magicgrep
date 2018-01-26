@@ -6,7 +6,7 @@ use CGI::Carp 'fatalsToBrowser';
 use CGI 'param';
 use URI::Escape;
 use FindBin '$Bin';
-use lib "$Bin/secure/lib";
+use lib "$Bin/../lib";
 use Magic;
 
 my $deck = param("deck") // "";

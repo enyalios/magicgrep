@@ -13,7 +13,7 @@ our %EXPORT_TAGS = ( # export as a group
 
 sub connect_to_db {
     (my $path = __FILE__) =~ s/[^\/]*$//;
-    my $dbh = DBI->connect("dbi:SQLite:dbname=$path/../magic.db","","") or die;
+    my $dbh = DBI->connect("dbi:SQLite:dbname=$path/../db/magic.db","","") or die;
 	return $dbh;
 }
 
@@ -51,7 +51,7 @@ sub match_against_list {
 sub generate_header {
     my $page = $_[0];
 	my $items = [
-		[ "Search" => "/magic"    ],
+		[ "Search" => "index.cgi" ],
 		[ "Stats"  => "stats.cgi" ],
 		[ "Bulk"   => "bulk.cgi"  ],
         [ "Lists"  => "lists.cgi" ],

@@ -51,3 +51,4 @@ figure out why card.cgi prints both faces when you search for the front of a dou
 add low, avg, and high prices to stats.cgi
 change all the paths to relative ones
 check everything into version control
+restructure everything so that non web files arent in the webroot

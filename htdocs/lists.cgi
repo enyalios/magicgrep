@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
 use FindBin '$Bin';
-use lib "$Bin/secure/lib";
+use lib "$Bin/../lib";
 use Magic;
 use URI::Escape;
 

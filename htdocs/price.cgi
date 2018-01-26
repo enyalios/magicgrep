@@ -8,7 +8,7 @@ use LWP::Simple;
 use XML::Simple;
 use URI::Escape;
 use FindBin '$Bin';
-use lib "$Bin/secure/lib";
+use lib "$Bin/../lib";
 use Magic;
 
 my $dbh = connect_to_db();

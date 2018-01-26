@@ -5,7 +5,7 @@ use warnings;
 use CGI::Carp 'fatalsToBrowser';
 use CGI 'param';
 use FindBin '$Bin';
-use lib "$Bin/secure/lib";
+use lib "$Bin/../lib";
 use Magic;
 use HTML::Entities;
 

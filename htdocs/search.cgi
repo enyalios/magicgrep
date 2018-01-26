@@ -6,7 +6,7 @@ use CGI::Carp 'fatalsToBrowser';
 use URI::Escape;
 use CGI 'param';
 use FindBin '$Bin';
-use lib "$Bin/secure/lib";
+use lib "$Bin/../lib";
 use Magic ':all';
 
 my $cards_per_page = 20; my $compact = 0;

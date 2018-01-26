@@ -7,13 +7,13 @@ use warnings;
 use LWP::Simple;
 use JSON;
 use FindBin '$Bin';
-use lib "$Bin/lib";
+use lib "$Bin/../lib";
 use Magic;
 
 # tweak this depending on where you want to store your data
 my $url = "https://mtgjson.com/json/AllSets.json.zip";
 my $version_url = "http://mtgjson.com/json/version.json";
-my $version_file = "$Bin/version.txt";
+my $version_file = "$Bin/../db/version.txt";
 $| = 1;
 
 my %set_trans = (
