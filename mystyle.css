@@ -1,0 +1,171 @@
+html,body {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+    height: 100%;
+    //background: #e8e8e8;
+    background: #ffffff;
+    }
+.cardimage {
+    width: 200px;
+    padding: 0px 2px;
+    }
+.text {
+    //width: 800px;
+    white-space: pre;
+    font-family: mono, fixed, monospace;
+    }
+form {
+    width: 100%;
+    display: block;
+    overflow: hidden;
+}
+.search {
+    display: block;
+    overflow: hidden;
+    padding-right: 10px;
+}
+#q {
+    width: 100%;
+    font-size: 16pt;
+    border: 2px solid #f80;
+    border-radius: 5px;
+    }
+#sort {
+    height: 32px;
+    font-size: 12pt;
+    float: right;
+    }
+.tabs {
+    float: right;
+    padding: 0px 10px;
+    font-size: 16px;
+}
+#status {
+    font-size: 16pt;
+    color: #f80;
+    }
+#content {
+    padding-top: 80px;
+    padding-bottom: 27px;
+    }
+#content td {
+    padding: 2px 8px;
+    }
+a {
+    text-decoration: none;
+    color: #84f;
+    }
+.wrapper {
+    min-height: 100%;
+    position: relative;
+    }
+.header1 {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 32px;
+    width: 100%;
+    background: #444;
+    padding: 5px;
+    color: black;
+    }
+.header2 {
+    position: fixed;
+    top: 40px;
+    left: 0px;
+    width: 100%;
+    background: #444;
+    padding: 0px 0px 4px 0px;
+    color: #fff;
+    }
+.footer {
+    width: 100%;
+    background: #444;
+    color: #fff;
+    position: absolute;
+    bottom: 0px;
+    height: 27px;
+    }
+.header2 a {
+    color: #f80;
+    }
+.footer a {
+    color: #f80;
+    }
+.pager {
+    text-align: center;
+    min-width: 60px;
+    }
+.pager-center {
+    min-width: 250px;
+    }
+.link {
+    margin-right: 20px;
+    }
+.cardpane {
+    display: inline-block;
+    margin-bottom: 20px;
+    }
+.orange {
+    color: #f80;
+    }
+.white {
+    color: #fff;
+    }
+.code {
+    font-family: mono;
+    color: black;
+    background: #ccc;
+    border: 1px solid #88f;
+    border-radius: 3px;
+    text-decoration: none;
+    white-space: nowrap;
+    }
+.code:hover {
+    border: 1px solid #00f;
+    background: #d8d8d8;
+    }
+.main {
+    //max-width: 640px;
+    padding: 10px;
+    padding-top: 50px
+    }
+.side {
+    display: inline-block;
+    }
+.total {
+    border-top: 2px solid black;
+    margin-top: 3px;
+    padding-top: 3px;
+    }
+.right {
+    text-align: right;
+    }
+.spacer {
+    height: 22px;
+    display: inline-block;
+    }
+.cardpane2 {
+    display: inline-block;                                                                                                                                   
+    padding-bottom: 8px;                                                                                                                                                                                     
+    width: 223px;                                                                                                                                            
+    }  
+.big {
+    font-size: 22pt;
+    }
+.cardpane_price {
+    float: right;
+    }
+.cardpane_set {
+    display: block;                                                                                                                                          
+    overflow: hidden;                                                                                                                                                                                        
+    text-overflow: ellipsis;                                                                                                                                 
+    white-space: nowrap;                                                                                                                                                                                     
+}  
+.carddetail {
+    white-space: pre;
+    font-family: mono, fixed, monospace;
+    font-size: 9pt;
+    margin-bottom: 12px;
+}

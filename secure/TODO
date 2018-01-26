@@ -1,0 +1,53 @@
+display the card text with tables, rather than <pre>
+make buttons to select or deselect colors
+make an advanced search page to help build complex queries
+make the sort button line up correctly
+make the spinner bigger
+make sort by color put mono color first, then multicolor, then hybrid
+make sort by type put all creatures together or something
+make it so card.cgi can show a single printing of a card
+make stats.cgi prompt for a query when one isnt given
+stop oversized cards from overlapping in card.cgi
+fix the sets listed for oversized cards on card.cgi
+figure out why the search field doesnt match the url sometimes when you use tha back button
+check everything into version control
+make the spinner not move the search bar and links back and forth
+fix the css for narrow screens
+
+# completed
+make the url update as you search
+make the page load with a search matching the url
+make a way to look up prices
+make pagination for lots of results
+autofocus search field
+url encode the query string
+put a pagination thingy at the bottom of the page
+fix price lookups so blank ones should fill in '???'
+make a compact interface
+figure out why the page reloads on button press when youre on page=2 and there is a ' in the search
+make the history get saved only when the url hasnt changed for a few seconds
+make weird cards (split, double face, etc) link to the correct picture and price info
+set up a db backend
+allow sorting by dates
+add a bulk page that searches for a whole decklist
+use transactions to make updating the database faster
+cache price data in the db
+fix price.cgi to not depend on ~/bin/price-cards
+make update.pl check the mtgjson version and bail if it hasnt changed
+stop using insert or replace into so price data doesnt get blown away
+write a cron job to cache price data
+move magic.db into the secure directory
+maybe move the set name translation from price.cgi to update.pl
+make a stats page that lists cards for copy pasting, total price, count
+add a button to copy the text from stats.cgi
+make the update script not blow away prices in the printings table
+pull common code from stats.cgi and search.cgi into a module
+make a help page that explains stuff
+write a helper function in Magic.pm to print the header on each page
+clean up the card.cgi page and integrate it better
+make a page to show all versions of a card
+move style info from stats.cgi to mystyle.css
+make prices word on card.cgi for split cards
+figure out why card.cgi prints both faces when you search for the front of a double face card
+add low, avg, and high prices to stats.cgi
+change all the paths to relative ones

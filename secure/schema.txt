@@ -1,0 +1,7 @@
+CREATE TABLE cards ( name text primary key, art_name text, price_name text, cmc integer, type text, date text, color integer, full_text text, price real, price_updated text);
+CREATE INDEX cmc_idx on cards ( cmc );
+CREATE INDEX type_idx on cards ( type );
+CREATE INDEX date_idx on cards ( date );
+CREATE INDEX color_idx on cards ( color );
+CREATE INDEX price_idx on cards ( price );
+CREATE TABLE printings ( card_name text, price_name text, set_name text, mid integer, price real, fprice real, PRIMARY KEY (card_name, set_name, mid) );

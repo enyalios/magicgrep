@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            body {
+                color: black;
+                background: white;
+            }
+            table {
+                border-collapse: collapse;
+                border: 1px solid grey;
+            }
+            th {
+                border-bottom: 1px solid grey;
+            }
+            td {
+                padding: 3px;
+                //border: 1px solid #88a;
+                min-width: 50px;
+            }
+            .center {
+                text-align: center;
+            }
+            .odd {
+                background: #eef;
+            }
+        </style>
+    </head>
+    <body>
+        <h2>Dual Land Cycles</h2>
+        <table>
+            <tr>
+                <th></th>
+                <th title="Approximate price">Price</th>
+                <th title="Enters the battlefield tapped">ETBT</th>
+                <th title="Exists for allied color pairs only">Allied</th>
+                <th title="These duals have basic land types">Typed</th>
+                <th title="Miscellaneous comments">Comments</th>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' revised">Original Duals</a></td>
+                <td>$$$$$</td>
+                <td></td>
+                <td></td>
+                <td class="center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' 1.life.*sacrifice.*search">Fetch Lands</a></td>
+                <td>$$$$</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' '2 life' zendikar">Shock Lands</a></td>
+                <td>$$$</td>
+                <td></td>
+                <td></td>
+                <td class="center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' shadowmoor|eventide rare">Filter Lands</a></td>
+                <td>$$$$</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' 'battle for zendikar' 'tapped unless'">Battle Lands</a></td>
+                <td>$</td>
+                <td class="center">1</td>
+                <td class="center">X</td>
+                <td class="center">X</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' '(magic 2010|innistrad)' 'tapped unless'">Check Lands</a></td>
+                <td>$$</td>
+                <td class="center">1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' 'tapped unless.*two or fewer other'">Fast Lands</a></td>
+                <td>$$$</td>
+                <td class="center">2</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' 'reveal.* or .*tapped'">Reveal Lands</a></td>
+                <td>$</td>
+                <td class="center">12</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' 'temple of' scry">Scry Lands</a></td>
+                <td>$</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' sacrifice.*search tapped !basic">Mirage Fetches</a></td>
+                <td>$</td>
+                <td class="center">X</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' becomes 'worldwake|zendikar|oath'">Man Lands</a></td>
+                <td>$$$</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+                <td>extremely varied in price</td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' tapped cycling">Cycling Lands</a></td>
+                <td>$$</td>
+                <td class="center">X</td>
+                <td class="center">X</td>
+                <td class="center">X</td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' damage 'ice age|apocalypse'">Pain Lands</a></td>
+                <td>$$</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land return tapped iconic">Bounce Lands</a></td>
+                <td>$</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' tainted">Tainted Lands</a></td>
+                <td>$</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>4 card cycle</td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' shards|khans uncommon">Tri Lands</a></td>
+                <td>$</td>
+                <td class="center">X</td>
+                <td></td>
+                <td></td>
+                <td>3 colors</td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land 'future sight rare'">Future Sight</a></td>
+                <td>$$$</td>
+                <td></td>
+                <td class="center">X</td>
+                <td></td>
+                <td>extremely varied in price and function</td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land odyssey '1.*\}\{'">Odyssey Filter Lands</a></td>
+                <td>$$</td>
+                <td class="center"></td>
+                <td class="center">X</td>
+                <td class="center"></td>
+                <td>Don't make mana on their own</td>
+            </tr>
+            <tr class="odd">
+                <td><a href="index.cgi?q=^type.*land ' or ' reveal.*tapped !shadows">Lorwyn tribal lands</a></td>
+                <td>$$</td>
+                <td class="center">12</td>
+                <td class="center"></td>
+                <td class="center"></td>
+                <td>Requires specific tribes and colors</td>
+            </tr>
+            <tr>
+                <td><a href="index.cgi?q=^type.*land ' or ' panorama">Shards fetch lands</a></td>
+                <td>$</td>
+                <td class="center"></td>
+                <td class="center"></td>
+                <td class="center"></td>
+                <td>Exists for each shard, only fetches basics</td>
+            </tr>
+        </table>
+        <br />
+        1: May enter the battlefield tapped in the early game.<br />
+        2: Usually enter the battlefield tapped when top-decked late game.<br />
+        <h3>Bad Dual Land Cycles</h3>
+        <ul>
+            <li><a href="index.cgi?q=^type.*land ' or ' 'depletion|doesn.t untap'">Depletion lands</a></li>
+            <li><a href="index.cgi?q=^type.*land ' or ' homelands">Homelands trifilter lands</a></li>
+            <li><a href="index.cgi?q=^type.*land ' or ' '1 damage to you' enters.*tapped !reveal">Tempest tap pain lands</a></li>
+            <li><a href="index.cgi?q=^type.*land ' or .*mana' 'enters the battlefield tapped\.%24' '!(damage|2 life|reveal|becomes|scry|cycling|%2C .* or )'">Tap lands from many, many sets</a></li>
+            <li><a href="index.cgi?q=^type.*land.*lair">Planeshift tri-color lairs</a></li>
+        </ul>
+    </body>
+</html>
