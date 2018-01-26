@@ -10,7 +10,6 @@ make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
-check everything into version control
 make the spinner not move the search bar and links back and forth
 fix the css for narrow screens
 
@@ -51,3 +50,4 @@ make prices word on card.cgi for split cards
 figure out why card.cgi prints both faces when you search for the front of a double face card
 add low, avg, and high prices to stats.cgi
 change all the paths to relative ones
+check everything into version control
