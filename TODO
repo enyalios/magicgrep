@@ -2,7 +2,6 @@ display the card text with tables, rather than <pre>
 make buttons to select or deselect colors
 make an advanced search page to help build complex queries
 make the sort button line up correctly
-make the spinner bigger
 make sort by color put mono color first, then multicolor, then hybrid
 make sort by type put all creatures together or something
 make it so card.cgi can show a single printing of a card
@@ -10,8 +9,8 @@ make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
-make the spinner not move the search bar and links back and forth
-fix the css for narrow screens
+support for authentication
+saving decklists/collections
 
 # completed
 make the url update as you search
@@ -52,3 +51,6 @@ add low, avg, and high prices to stats.cgi
 change all the paths to relative ones
 check everything into version control
 restructure everything so that non web files arent in the webroot
+make the spinner bigger
+make the spinner not move the search bar and links back and forth
+fix the css for narrow screens
