@@ -96,18 +96,22 @@ Content-Type: text/html
                 document.title = document.getElementById("q").value;
 
                 // return if the search string is too short
+                var content = document.getElementById("content");
                 if(q.length < 4) { 
-                    document.getElementById("content").innerHTML = "";
+                    content.innerHTML = "";
                     return;
                 }
 
                 // otherwise do a search
-                document.getElementById("status").innerHTML = "<img height='22px' width='22px' src='spin.gif'>";
+                document.getElementById("status").style.display = "block";
+                if(content.innerHTML == "") {
+                    content.innerHTML = "<div class='header2'></div>";
+                }
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if(xmlhttp.readyState == 4) {
-                        document.getElementById("status").innerHTML = "";
-                        document.getElementById("content").innerHTML = xmlhttp.responseText;
+                        document.getElementById("status").style.display = "none";
+                        content.innerHTML = xmlhttp.responseText;
                     }
                 }
                 xmlhttp.open("GET", "search.cgi" + query_string, true);
@@ -147,16 +151,16 @@ Content-Type: text/html
             }, false);
         </script>
     </head>
-    <body>
+    <body style="overflow-y:scroll;">
         <div class="wrapper">
             <div class="header1">
                 <form onSubmit="return false;">
+                    <div class="spacer2">&nbsp;</div>
                     <div class="tabs">
                         [ <a href="javascript:stats()" class="orange">Stats</a> ]
                         [ <a href="bulk.cgi" class="orange">Bulk</a> ]
                         [ <a href="lists.cgi" class="orange">Lists</a> ]
                         [ <a href="help.cgi" class="orange">Help</a> ]
-                        <span id="status"></span>
                     </div>
                     <select name="sort" onchange="update();this.blur()" id="sort">
                         $sort_string
@@ -165,6 +169,7 @@ Content-Type: text/html
                 </form>
             </div>
             <div id="content">$content</div>
+            <span id="status"><img height='71px' width='71px' src='spin_large.gif'></span>
         </div>
     </body>
 </html>

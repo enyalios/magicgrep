@@ -14,7 +14,7 @@ my $string = param("q") // "";
 print "Content-Type: text/html\n\n";
 
 if(length $string < 4) {
-    print "Your query is too short.  Please type something in the <a href='/magic'>search field</a>, and then click 'Stats'.";
+    print "Your query is too short.  Please type something in the <a href='index.cgi'>search field</a>, and then click 'Stats'.";
     exit;
 }
 my @queries = get_fields($string);

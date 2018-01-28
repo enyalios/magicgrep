@@ -61,7 +61,7 @@ sub generate_header {
     # (its hardcoded on the search page)
     $items = [ grep { $page eq "Stats" || $_->[0] ne "Stats" } @$items ];
 
-    my $string = "<div class=\"header1\">\n<span class=\"spacer\"></span>\n";
+    my $string = "<div class=\"header3\">\n<span class=\"spacer\"></span>\n";
     for(@$items) {
         my $color = "orange";
         my $link = "href=\"$_->[1]\"";

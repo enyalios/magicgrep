@@ -38,12 +38,22 @@ form {
     }
 .tabs {
     float: right;
-    padding: 0px 10px;
+    padding: 5px 10px 0px 10px;
     font-size: 16px;
 }
+.spacer2 {
+    display: inline-block;
+    width: 71px;
+    float: right;
+    }
 #status {
-    font-size: 16pt;
-    color: #f80;
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    height: 71px;
+    width: 71px;
+    background: #444;
+    display: none;
     }
 #content {
     padding-top: 80px;
@@ -60,7 +70,7 @@ a {
     min-height: 100%;
     position: relative;
     }
-.header1 {
+.header1,.header3 {
     position: fixed;
     top: 0px;
     left: 0px;
@@ -74,6 +84,7 @@ a {
     position: fixed;
     top: 40px;
     left: 0px;
+    height: 27px;
     width: 100%;
     background: #444;
     padding: 0px 0px 4px 0px;
@@ -116,7 +127,7 @@ a {
 .code {
     font-family: mono;
     color: black;
-    background: #ccc;
+    background: #ddd;
     border: 1px solid #88f;
     border-radius: 3px;
     text-decoration: none;
@@ -124,7 +135,7 @@ a {
     }
 .code:hover {
     border: 1px solid #00f;
-    background: #d8d8d8;
+    background: #eee;
     }
 .main {
     //max-width: 640px;
@@ -168,4 +179,25 @@ a {
     font-family: mono, fixed, monospace;
     font-size: 9pt;
     margin-bottom: 12px;
+}
+@media all and (max-width: 1024px) {
+    .header1 {
+        height: 56px;
+    }
+    .header2 {
+        top: 66px;
+    }
+    .tabs {
+        display: block;
+        float: none;
+        top: 37px;
+        left: 0px;
+        position: absolute;
+    }
+    #sort {
+        margin-right: 10px;
+    }
+    #content {
+        padding-top: 106px;
+    }
 }
