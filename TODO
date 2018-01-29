@@ -11,6 +11,7 @@ fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
 support for authentication
 saving decklists/collections
+add format legality to the db and display it in card.cgi
 
 # completed
 make the url update as you search
