@@ -43,6 +43,9 @@ Content-Type: text/html
             'CMC' has a card's converted mana cost, and 'CID' is its color identity (used for the <a href="http://mtgcommander.net">commander format</a>).
             <a class="code" href="index.cgi?q='^cmc: *10\$' ^cid:.*g">'^cmc: *10\$' ^cid:.*g</a> searches for 10 mana cards with green in their color identity.
             <br /><br />
+            To find cards to go in your white black commander deck try something like <a class="code" href="index.cgi?q='^cid%3A *[wb]*%24'">'^cid: *[wb]*\$'</a>.
+            This will match cards with white, black, white-black, and colorless color identities.
+            <br /><br />
             To search for a word only in the rules text but not in other fields, use a pattern like <a class="code" href="index.cgi?q='^(rules text:)? .*cipher'">'^(rules text:)? .*cipher'</a>.
             This looks for the word 'cipher' when it's on a line that started with 'rules text:' or a space (only rules text lines can start with a space).
             <br /><br />
