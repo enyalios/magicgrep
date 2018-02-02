@@ -12,6 +12,8 @@ figure out why the search field doesnt match the url sometimes when you use tha 
 support for authentication
 saving decklists/collections
 add format legality to the db and display it in card.cgi
+switch the color sort to sort by color and not color identity
+add a hidden field 'color' to each card
 
 # completed
 make the url update as you search
