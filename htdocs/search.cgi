@@ -55,7 +55,7 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     1 while $full_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
     chomp $full_text;
     if($compact) {
-        $content .= "<div class='cardpane'><img class='cardimage' src='http://gatherer.wizards.com/Handlers/Image.ashx?name=$art_name&type=card&.jpg'><br/>";
+        $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='http://gatherer.wizards.com/Handlers/Image.ashx?name=$art_name&type=card&.jpg'></a><br/>";
     } else {
         $content .= "<tr><td><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='http://gatherer.wizards.com/Handlers/Image.ashx?name=$art_name&type=card&.jpg'></a></td>";
         $content .= "<td><div class='text'>$full_text\n";
