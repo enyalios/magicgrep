@@ -18,6 +18,7 @@ if(length $string < 4) {
     exit;
 }
 my @queries = get_fields($string);
+tilde_expand(@queries);
 
 my $num_cards = my $total_price = 0;
 my $name_list = my $price_list = "";

@@ -5,10 +5,10 @@ use DBI;
 
 use Exporter qw(import);
 
-our @EXPORT = qw(connect_to_db generate_header libpath);
-our @EXPORT_OK = qw(get_fields match_against_list);
+our @EXPORT = qw(connect_to_db generate_header);
+our @EXPORT_OK = qw(get_fields match_against_list tilde_expand);
 our %EXPORT_TAGS = ( # export as a group
-    all => [qw(connect_to_db get_fields match_against_list generate_header)],
+    all => [qw(connect_to_db get_fields match_against_list generate_header tilde_expand)],
 );
 
 sub connect_to_db {
@@ -34,13 +34,24 @@ sub get_fields {
     return @fields;
 }
 
+sub tilde_expand {
+    for(@_) {
+        if(index($_, "~") != -1) {
+            s/~/(\\1|\\2)/g;
+            $_ = "^Name: *+(([^,\\n]*+).*)\$[\\s\\S]*" . $_;
+        }
+    }
+}
+
 sub match_against_list {
 	(my $string, my $list) = @_;
 
 	for my $arg (@{$list}) {
         if ((my $regex = $arg) =~ s/^!//) {
+            # invert matches for regexs that start with a '!'
             return 0 if $string =~ /$regex/im;
         } else {
+            # otherwise just match normally
             return 0 unless $string =~ /$regex/im;
         }
     }

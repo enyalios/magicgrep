@@ -24,6 +24,7 @@ my $content;
 $content .= "<table>\n" unless $compact;
 
 my @queries = get_fields($string);
+tilde_expand(@queries);
 
 # make it read in 1 card at a time
 my $num_cards = my $shown_cards = 0;
