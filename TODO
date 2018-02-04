@@ -11,7 +11,6 @@ fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
 support for authentication
 saving decklists/collections
-add format legality to the db and display it in card.cgi
 switch the color sort to sort by color and not color identity
 add a hidden field 'color' to each card
 
@@ -57,3 +56,4 @@ restructure everything so that non web files arent in the webroot
 make the spinner bigger
 make the spinner not move the search bar and links back and forth
 fix the css for narrow screens
+add format legality to the db and display it in card.cgi

@@ -11,7 +11,7 @@ use lib "$Bin/../lib";
 use Magic;
 
 # tweak this depending on where you want to store your data
-my $url = "https://mtgjson.com/json/AllSets.json.zip";
+my $url = "https://mtgjson.com/json/AllSets-x.json.zip";
 my $version_url = "http://mtgjson.com/json/version.json";
 my $version_file = "$Bin/../db/version.txt";
 $| = 1;
@@ -175,6 +175,7 @@ for my $set_code (keys %$tree) {
         $cards{$name}{cid}  = join "", @{$card->{colorIdentity}} if defined $card->{colorIdentity};
         $cards{$name}{loyal} = $card->{loyalty};
         $cards{$name}{extras} = undef;
+        $cards{$name}{legal} = join ", ", map { $_->{legality} . " in " . $_->{format} } @{$card->{legalities}};
         if(defined $card->{colors} && (colors_to_string(@{$card->{colors}}) ne cost_to_colors($card->{manaCost}))) {
             push @{$cards{$name}{extras}}, join("/", @{$card->{colors}}) . " color indicator.";
         }
@@ -263,8 +264,8 @@ for(sort keys %cards) {
     $fulltext .= "Loyalty:     $card{loyal}\n" if defined $card{loyal};
     $fulltext .= "Rules Text:  $card{text}";
     $fulltext .= "\n";
-    $fulltext .= "Set/Rarity:  " . join(", ", uniq map { $_->[1] } sort { $a->[0] cmp $b->[0] } @{$card{set}});
-    $fulltext .= "\n";
+    $fulltext .= "Set/Rarity:  " . join(", ", uniq map { $_->[1] } sort { $a->[0] cmp $b->[0] } @{$card{set}}) . "\n";
+    $fulltext .= "Legality:    $card{legal}\n";
 
     if($card_names{$_}) {
         $update->execute($card{name}, $card{cmc}, $card{cid}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $_);
