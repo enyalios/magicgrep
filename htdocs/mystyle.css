@@ -180,6 +180,29 @@ a {
     font-size: 9pt;
     margin-bottom: 12px;
 }
+.small-window {
+    margin: 20px auto;
+    width: 400px;
+    text-align: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    background: white;
+    padding: 30px;
+}
+.button {
+    background: linear-gradient(#aaf, #88f);
+    color: #fff;
+    border: 1px solid #666;
+    border-radius: 8px;
+    padding: 8px;
+}
+.alert {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px;
+    background: #fdd;
+    color: #a00;
+}
 @media all and (max-width: 1024px) {
     .header1 {
         height: 56px;

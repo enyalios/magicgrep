@@ -5,3 +5,5 @@ CREATE INDEX date_idx on cards ( date );
 CREATE INDEX color_idx on cards ( color );
 CREATE INDEX price_idx on cards ( price );
 CREATE TABLE printings ( card_name text, price_name text, set_name text, mid integer, price real, fprice real, PRIMARY KEY (card_name, set_name, mid) );
+CREATE TABLE users ( id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, oauth_account TEXT UNIQUE, key TEXT UNIQUE );
+CREATE TABLE sqlite_sequence(name,seq);

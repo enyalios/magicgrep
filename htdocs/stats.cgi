@@ -23,7 +23,7 @@ tilde_expand(@queries);
 my $num_cards = my $total_price = 0;
 my $name_list = my $price_list = "";
 
-my $dbh = connect_to_db();
+my $dbh = get_db_handle();
 my $sth  = $dbh->prepare("SELECT full_text, price_name, price FROM cards ORDER BY name");
 $sth->execute();
 

@@ -12,7 +12,7 @@ use HTML::Entities;
 my $card = param("card") // "";
 my $safe_name = encode_entities($card);
 
-my $dbh = connect_to_db();
+my $dbh = get_db_handle();
 my $card_ref = $dbh->selectrow_arrayref("SELECT full_text FROM cards WHERE name = ?", {}, $card);
 my $card_text = $card_ref->[0];
 #$card_text =~ s/^(CMC|CID|Name): .*\n//mg; # dont show some fields

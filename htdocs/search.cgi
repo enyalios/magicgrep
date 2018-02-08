@@ -29,7 +29,7 @@ tilde_expand(@queries);
 # make it read in 1 card at a time
 my $num_cards = my $shown_cards = 0;
 
-my $dbh = connect_to_db();
+my $dbh = get_db_handle();
 my $sort_dir = "ASC";
 $sort_dir = "DESC" if $sort eq "price";
 my $sth  = $dbh->prepare("SELECT full_text, name, art_name, price_name, price, price_updated FROM cards ORDER BY " . $dbh->quote_identifier($sort) . " $sort_dir");

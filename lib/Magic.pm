@@ -2,19 +2,21 @@ package Magic;
 use strict;
 use warnings;
 use DBI;
+use CGI 'cookie';
 
 use Exporter qw(import);
 
-our @EXPORT = qw(connect_to_db generate_header);
-our @EXPORT_OK = qw(get_fields match_against_list tilde_expand);
+our @EXPORT = qw(get_db_handle generate_header);
+our @EXPORT_OK = qw(get_fields match_against_list tilde_expand get_username);
 our %EXPORT_TAGS = ( # export as a group
-    all => [qw(connect_to_db get_fields match_against_list generate_header tilde_expand)],
+    all => [qw(get_db_handle get_fields match_against_list generate_header tilde_expand get_username)],
 );
 
-sub connect_to_db {
-    (my $path = __FILE__) =~ s/[^\/]*$//;
-    my $dbh = DBI->connect("dbi:SQLite:dbname=$path/../db/magic.db","","") or die;
-	return $dbh;
+(my $path = __FILE__) =~ s/[^\/]*$//;
+my $dbh = DBI->connect("dbi:SQLite:dbname=$path/../db/magic.db","","") or die;
+
+sub get_db_handle {
+    return $dbh;
 }
 
 sub get_field {
@@ -68,6 +70,12 @@ sub generate_header {
         [ "Lists"  => "lists.cgi" ],
         [ "Help"   => "help.cgi"  ],
     ];
+    my $username = get_username();
+    if(defined $username) {
+        push @{$items}, [ "Logout", "logout.cgi" ];
+    } else {
+        push @{$items}, [ "Login", "secure/login.cgi" ];
+    }
     # only print the stats tab on the stats page
     # (its hardcoded on the search page)
     $items = [ grep { $page eq "Stats" || $_->[0] ne "Stats" } @$items ];
@@ -85,6 +93,15 @@ sub generate_header {
     $string .= "</div>\n";
 
     return $string;
+}
+
+sub get_username {
+    my $key = cookie('key');
+    return undef unless defined $key;
+
+    my $ref = $dbh->selectcol_arrayref("SELECT username FROM users WHERE key = ?", {}, $key);
+    return undef if @{$ref} != 1;
+    return $ref->[0];
 }
 
 1;

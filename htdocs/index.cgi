@@ -5,6 +5,9 @@ use warnings;
 use CGI::Carp 'fatalsToBrowser';
 use CGI 'param';
 use URI::Escape;
+use FindBin '$Bin';
+use lib "$Bin/../lib";
+use Magic 'get_username';
 
 my @sort_options = qw"Name CMC Color Date Price Type";
 
@@ -54,6 +57,7 @@ my $sort_string = join "\n                        ", map {
     lc $_ eq $sort ? " selected='selected'" : "",
     $_;
 } @sort_options;
+my $login = defined get_username() ? '<a href="logout.cgi" class="orange">Logout</a>' : '<a href="secure/login.cgi" class="orange">Login</a>';
 
 print <<EOF;
 Content-Type: text/html
@@ -161,6 +165,7 @@ Content-Type: text/html
                         [ <a href="bulk.cgi" class="orange">Bulk</a> ]
                         [ <a href="lists.cgi" class="orange">Lists</a> ]
                         [ <a href="help.cgi" class="orange">Help</a> ]
+                        [ $login ]
                     </div>
                     <select name="sort" onchange="update();this.blur()" id="sort">
                         $sort_string

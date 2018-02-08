@@ -9,10 +9,11 @@ make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
-support for authentication
 saving decklists/collections
 switch the color sort to sort by color and not color identity
 add a hidden field 'color' to each card
+move everything to behind https
+make the cookie timeout refresh with every page view
 
 # completed
 make the url update as you search
@@ -57,3 +58,6 @@ make the spinner bigger
 make the spinner not move the search bar and links back and forth
 fix the css for narrow screens
 add format legality to the db and display it in card.cgi
+support for authentication
+create a login.cgi that generates a user id and stores it
+create logout.cgi
