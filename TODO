@@ -14,6 +14,8 @@ switch the color sort to sort by color and not color identity
 add a hidden field 'color' to each card
 move everything to behind https
 make the cookie timeout refresh with every page view
+make the search bar change colors when focused
+alternate background colors when displaying search results
 
 # completed
 make the url update as you search
