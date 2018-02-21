@@ -62,7 +62,6 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
         $content .= "<td><div class='text'>$full_text\n";
         $content .= "Price:       $price</div>\n";
     }
-    $content .= "<a class='link' href='http://magiccards.info/query?q=!$escaped_name'>MC</a>";
     $content .= "<a class='link' href='https://edhrec.com/route?cc=$escaped_name'>EDH</a>";
     $content .= "<a class='link' href='http://shop.tcgplayer.com/magic/product/show?ProductName=$price_name&IsProductNameExact=true'>TCG</a>";
     $content .= "<a class='link' href='http://enyalios.net/cgi-bin/mtgstocks.cgi?q=$price_name'>MS</a>";
