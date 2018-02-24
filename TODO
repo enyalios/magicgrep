@@ -16,6 +16,7 @@ move everything to behind https
 make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
+add a timeshifted field for cards that have ever had a timeshifted frame
 
 # completed
 make the url update as you search
