@@ -165,6 +165,9 @@ sub color_sort_order {
     my $card = $_[0];
 
     return 8 if $card->{layout} eq "split";
+    # we check for lands before colored-ness so dryad arbor sorts correctly
+    return 11 if(defined $card->{supertypes} && (any { $_ eq 'Basic' } @{$card->{supertypes}})); # basic land
+    return 10 if(defined $card->{types}      && (any { $_ eq "Land" }  @{$card->{types}}));      # non-basic land
 
     # we use the union of the colors array and the mana cost so that devoid cards sort correctly
     my @colors = ();
@@ -194,9 +197,7 @@ sub color_sort_order {
         }
     } else {
         # if this card has no color
-        return 11 if(defined $card->{supertypes} && (any { $_ eq 'Basic' }    @{$card->{supertypes}})); # basic land
-        return 10 if(defined $card->{types}      && (any { $_ eq "Land" }     @{$card->{types}}));      # non-basic land
-        return 9  if(defined $card->{types}      && (any { $_ eq "Artifact" } @{$card->{types}}));      # colorless artifact
+        return 9 if(defined $card->{types} && (any { $_ eq "Artifact" } @{$card->{types}})); # colorless artifact
         return 0; # colorless spell
     }
     die "should not have gotten here";
