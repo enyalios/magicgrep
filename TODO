@@ -2,7 +2,6 @@ display the card text with tables, rather than <pre>
 make buttons to select or deselect colors
 make an advanced search page to help build complex queries
 make the sort button line up correctly
-make sort by color put mono color first, then multicolor, then hybrid
 make sort by type put all creatures together or something
 make it so card.cgi can show a single printing of a card
 make stats.cgi prompt for a query when one isnt given
@@ -10,7 +9,6 @@ stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use tha back button
 saving decklists/collections
-switch the color sort to sort by color and not color identity
 add a hidden field 'color' to each card
 move everything to behind https
 make the cookie timeout refresh with every page view
@@ -64,3 +62,5 @@ add format legality to the db and display it in card.cgi
 support for authentication
 create a login.cgi that generates a user id and stores it
 create logout.cgi
+make sort by color put mono color first, then multicolor, then hybrid
+switch the color sort to sort by color and not color identity

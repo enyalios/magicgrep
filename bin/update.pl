@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use LWP::Simple;
 use JSON;
+use List::Util 'any';
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
@@ -139,6 +140,68 @@ sub check_version {
     }
 }
 
+sub color_sort_order {
+    # 0 = colorless non-land, non-artifiact
+    # 1 = white
+    # 2 = blue
+    # 3 = black
+    # 4 = red
+    # 5 = green
+    # 6 = gold
+    # 7 = hybrid
+    # 8 = split
+    # 9 = colorless artifact
+    # 10 = non-basic lands
+    # 11 = basic lands
+
+    my %letter_to_color = qw(
+    W White
+    U Blue
+    B Black
+    R Red
+    G Green
+    );
+
+    my $card = $_[0];
+
+    return 8 if $card->{layout} eq "split";
+
+    # we use the union of the colors array and the mana cost so that devoid cards sort correctly
+    my @colors = ();
+    @colors = @{$card->{colors}} if defined $card->{colors};
+    if(defined $card->{manaCost}) {
+        for(split //, $card->{manaCost}) {
+            push @colors, $letter_to_color{$_} if defined $letter_to_color{$_};
+        }
+        @colors = uniq @colors;
+    }
+
+    if(@colors){
+        if(@colors == 1){
+            # if it has exactly one color
+            # put the colors in the right order
+            return 1 if $colors[0] eq "White";
+            return 2 if $colors[0] eq "Blue";
+            return 3 if $colors[0] eq "Black";
+            return 4 if $colors[0] eq "Red";
+            return 5 if $colors[0] eq "Green";
+            die "unknown color '$colors[0]' for card $card->{name}";
+        } else {
+            # if we have more than one color
+            # is this a hybrid card?
+            return 7 if(defined $card->{manaCost} && $card->{manaCost} =~ m|/|);
+            return 6; # gold
+        }
+    } else {
+        # if this card has no color
+        return 11 if(defined $card->{supertypes} && (any { $_ eq 'Basic' }    @{$card->{supertypes}})); # basic land
+        return 10 if(defined $card->{types}      && (any { $_ eq "Land" }     @{$card->{types}}));      # non-basic land
+        return 9  if(defined $card->{types}      && (any { $_ eq "Artifact" } @{$card->{types}}));      # colorless artifact
+        return 0; # colorless spell
+    }
+    die "should not have gotten here";
+}
+
 
 my $num_cards = "0";
 
@@ -148,7 +211,7 @@ print "downloading...\n";
 
 my (%cards, @by_set);
 my $blob = join "", `wget -O - "$url" | funzip`;
-#my $blob = join "", `cat AllSets.json.zip | funzip`;
+#my $blob = join "", `cat AllSets-x.json.zip | funzip`;
 while(my ($key, $value) = each %char_trans) {
     $blob =~ s/$key/$value/g;
 }
@@ -173,6 +236,7 @@ for my $set_code (keys %$tree) {
         push @{$cards{$name}{set}}, [ $set_release, $set_name . " " . $card->{rarity} ];
         $cards{$name}{cmc}  = $card->{cmc};
         $cards{$name}{cid}  = join "", @{$card->{colorIdentity}} if defined $card->{colorIdentity};
+        $cards{$name}{color_sort} = color_sort_order($card);
         $cards{$name}{loyal} = $card->{loyalty};
         $cards{$name}{extras} = undef;
         $cards{$name}{legal} = join ", ", map { $_->{legality} . " in " . $_->{format} } @{$card->{legalities}};
@@ -232,7 +296,7 @@ for my $set_code (keys %$tree) {
 }
 
 print "inserting cards...\n";
-my $dbh = connect_to_db();
+my $dbh = get_db_handle();
 my %card_names = map { $_ => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
 my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ? WHERE name = ?");
@@ -268,9 +332,9 @@ for(sort keys %cards) {
     $fulltext .= "Legality:    $card{legal}\n";
 
     if($card_names{$_}) {
-        $update->execute($card{name}, $card{cmc}, $card{cid}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $_);
+        $update->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $_);
     } else {
-        $insert->execute($card{name}, $card{cmc}, $card{cid}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name});
+        $insert->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name});
     }
     #printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;
 }
