@@ -6,10 +6,10 @@ use CGI 'cookie';
 
 use Exporter qw(import);
 
-our @EXPORT = qw(get_db_handle generate_header);
+our @EXPORT = qw(get_db_handle generate_header image_handler);
 our @EXPORT_OK = qw(get_fields match_against_list tilde_expand get_username);
 our %EXPORT_TAGS = ( # export as a group
-    all => [qw(get_db_handle get_fields match_against_list generate_header tilde_expand get_username)],
+    all => [qw(get_db_handle get_fields match_against_list generate_header tilde_expand get_username image_handler)],
 );
 
 (my $path = __FILE__) =~ s/[^\/]*$//;
@@ -102,6 +102,10 @@ sub get_username {
     my $ref = $dbh->selectcol_arrayref("SELECT username FROM users WHERE key = ?", {}, $key);
     return undef if @{$ref} != 1;
     return $ref->[0];
+}
+
+sub image_handler {
+    return "http://gatherer.wizards.com/Handlers/Image.ashx";
 }
 
 1;
