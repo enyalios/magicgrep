@@ -1,4 +1,5 @@
-# magicgrep
+magicgrep
+=========
 
 A web tool for searching Magic: the Gathering cards using regular expressions.
 
