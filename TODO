@@ -7,7 +7,7 @@ make it so card.cgi can show a single printing of a card
 make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
-figure out why the search field doesnt match the url sometimes when you use tha back button
+figure out why the search field doesnt match the url sometimes when you use the back button
 saving decklists/collections
 add a hidden field 'color' to each card
 move everything to behind https
@@ -15,6 +15,7 @@ make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
 add a timeshifted field for cards that have ever had a timeshifted frame
+fix negated regexs that use ~
 
 # completed
 make the url update as you search
