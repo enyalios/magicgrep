@@ -62,7 +62,7 @@ sub match_against_list {
 }
 
 sub generate_header {
-    my $page = $_[0];
+    my $page = $_[0] // "";
 	my $items = [
 		[ "Search" => "index.cgi" ],
 		[ "Stats"  => "stats.cgi" ],
