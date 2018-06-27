@@ -4,7 +4,7 @@
 # run everyday it will cache prices for everything over the course of a week
 
 cd `dirname $0`/..
-echo 'select distinct price_name from cards order by price_updated limit (select count(distinct price_name) / 7 from cards)' \
+echo 'select distinct price_name from cards order by price_updated limit (select count(distinct price_name) / 7 from cards);' \
     | sqlite3 db/magic.db \
     | shuf \
     | perl -MURI::Escape -lne 'print uri_escape($_)' \
