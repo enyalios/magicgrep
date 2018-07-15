@@ -9,12 +9,13 @@ use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic ':all';
 
-my $cards_per_page = 20; my $compact = 0;
-#$cards_per_page = 50; $compact = 1;
+my $cards_per_page = 20;
 my $string = param("q") // "";
 my $escaped_query = uri_escape($string);
 my $page = param("page") // 1;
 my $sort = param("sort") // "name";
+my $compact = param("compact") // "0";
+$cards_per_page = 60 if $compact;
 my $card_start = ($page - 1) * $cards_per_page + 1;
 my $epoch = time;
 my $one_week = 7 * 24 * 60 * 60;
