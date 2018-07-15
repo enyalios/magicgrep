@@ -58,7 +58,7 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     chomp $full_text;
     my $image_handler = image_handler();
     if($compact) {
-        $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a><br/>";
+        $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a><br/>$price ";
     } else {
         $content .= "<tr><td><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a></td>";
         $content .= "<td><div class='text'>$full_text\n";
