@@ -136,7 +136,8 @@ Content-Type: text/html
 
             function stats() {
                 var q = encodeURIComponent(document.getElementById("q").value);
-                window.location.assign("stats.cgi?q=" + q);
+                var sort = encodeURIComponent(document.getElementById("sort").value);
+                window.location.assign("stats.cgi?q=" + q + "&sort=" + sort);
             }
             
             window.addEventListener('popstate', function(event) {

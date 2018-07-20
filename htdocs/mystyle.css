@@ -66,6 +66,9 @@ a {
     text-decoration: none;
     color: #84f;
     }
+a:hover {
+    text-decoration: underline;
+}
 .wrapper {
     min-height: 100%;
     position: relative;
@@ -144,6 +147,7 @@ a {
     }
 .side {
     display: inline-block;
+    vertical-align: top;
     }
 .total {
     border-top: 2px solid black;

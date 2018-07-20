@@ -2,14 +2,17 @@
 
 use strict;
 use warnings;
-use CGI::Carp 'fatalsToBrowser';
-use URI::Escape;
 use CGI 'param';
+use CGI::Carp 'fatalsToBrowser';
+use HTML::Entities;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic ':all';
 
 my $string = param("q") // "";
+my $sort = param("sort") // "name";
+my $sort_dir = "ASC";
+$sort_dir = "DESC" if $sort eq "price";
 
 print "Content-Type: text/html\n\n";
 
@@ -19,12 +22,13 @@ if(length $string < 4) {
 }
 my @queries = get_fields($string);
 tilde_expand(@queries);
+$string = encode_entities($string);
 
 my $num_cards = my $total_price = 0;
 my $name_list = my $price_list = "";
 
 my $dbh = get_db_handle();
-my $sth  = $dbh->prepare("SELECT full_text, price_name, price FROM cards ORDER BY name");
+my $sth  = $dbh->prepare("SELECT full_text, price_name, price FROM cards ORDER BY " . $dbh->quote_identifier($sort) . " $sort_dir");
 $sth->execute();
 
 my $high = my $low = 0;
@@ -45,6 +49,16 @@ $low         = sprintf "%.2f", $low;
 $total_price = sprintf "%.2f", $total_price;
 my $plural = ($num_cards == 1) ? "" : "s";
 my $header = generate_header("Stats");
+my $sort_block = "";
+for(qw"Name CMC Color Date Price Type") {
+    if(lc($_) eq $sort) {
+        $sort_block .= "<b>$_</b>\n";
+    } else {
+        $sort_block .= sprintf "<a href=\"?q=%s&sort=%s\">%s</a>\n", $string, lc($_), $_;
+    }
+}
+$sort = encode_entities($sort);
+
 print <<EOF;
 <!DOCTYPE html>
 <html>
@@ -65,8 +79,10 @@ print <<EOF;
     <body>
         $header
         <div class="main">
-            <button onclick="copy()">Copy Cardlist</button><br />
-            <br />
+            <a href="index.cgi?q=$string&sort=$sort">Return to Search</a><br /><br />
+            Sort by:
+            $sort_block
+            <br /><br />
             <div class="side">
                 <div id="list">$name_list
                 </div>
@@ -82,22 +98,32 @@ print <<EOF;
                     \$$total_price
                 </div>
             </div>
-            <br />
-            <br />
-            <table>
-                <tr>
-                    <td>Lowest Price</td>
-                    <td>\$$low</td>
-                </tr>
-                <tr>
-                    <td>Average Price</td>
-                    <td>\$$avg</td>
-                </tr>
-                <tr>
-                    <td>Highest Price</td>
-                    <td>\$$high</td>
-                </tr>
-            </table>
+            <div class="side" style="margin-left:30px;">
+                <button onclick="copy()">Copy Cardlist</button><br />
+                <br />
+                <table>
+                    <tr>
+                        <td>Card Count</td>
+                        <td><div class="right">$num_cards</div></td>
+                    </tr>
+                    <tr>
+                        <td>Lowest Price</td>
+                        <td><div class="right">\$$low</div></td>
+                    </tr>
+                    <tr>
+                        <td>Average Price</td>
+                        <td><div class="right">\$$avg</div></td>
+                    </tr>
+                    <tr>
+                        <td>Highest Price</td>
+                        <td><div class="right">\$$high</div></td>
+                    </tr>
+                    <tr>
+                        <td>Total Cost</td>
+                        <td><div class="right">\$$total_price</div></td>
+                    </tr>
+                </table>
+            </div>
         </div>
     </body>
 </html>
