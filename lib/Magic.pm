@@ -40,7 +40,9 @@ sub tilde_expand {
     for(@_) {
         if(index($_, "~") != -1) {
             s/~/(\\1|\\2)/g;
+            my $negate = s/^!//;
             $_ = "^Name: *+(([^,\\n]*+).*)\$[\\s\\S]*" . $_;
+            $_ = "!$_" if $negate;
         }
     }
 }

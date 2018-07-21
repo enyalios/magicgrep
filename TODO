@@ -15,7 +15,6 @@ make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
 add a timeshifted field for cards that have ever had a timeshifted frame
-fix negated regexs that use ~
 add a reserved field for cards on the reserved list
 make the sort field default to something like 'sort by'
 
@@ -68,3 +67,4 @@ create logout.cgi
 make sort by color put mono color first, then multicolor, then hybrid
 switch the color sort to sort by color and not color identity
 the stats page can now sort by different fields
+fix negated regexs that use ~
