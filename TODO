@@ -13,8 +13,6 @@ move everything to behind https
 make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
-add a timeshifted field for cards that have ever had a timeshifted frame
-add a reserved field for cards on the reserved list
 make the sort field default to something like 'sort by'
 
 # completed
@@ -69,3 +67,5 @@ the stats page can now sort by different fields
 fix negated regexs that use ~
 add a hidden field 'color' to each card
 fix sort order of the letters in the color and cid fields
+add a timeshifted field for cards that have ever had a timeshifted frame
+add a reserved field for cards on the reserved list

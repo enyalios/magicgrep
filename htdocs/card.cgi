@@ -15,8 +15,6 @@ my $safe_name = encode_entities($card);
 my $dbh = get_db_handle();
 my $card_ref = $dbh->selectrow_arrayref("SELECT full_text FROM cards WHERE name = ?", {}, $card);
 my $card_text = $card_ref->[0];
-#$card_text =~ s/^(CMC|CID|Name): .*\n//mg; # dont show some fields
-$card_text =~ s/^Name: .*\n//mg; # dont show some fields
 # this craziness wraps the lines to 80 columns
 1 while $card_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
 
@@ -53,7 +51,7 @@ while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings
     $card_list .= sprintf "<span class=\"cardpane_price\">(%s)</span><span class=\"cardpane_set\" title=\"%s\">%s</span></div>\n", $price_string, $set_name, $set_name;
 }
 
-$lowest_price  = $lowest_price  == 0 ? "" : sprintf "Low price:   \$%.2f\n", $lowest_price;
+$lowest_price  = $lowest_price  == 0 ? "" : sprintf "Price:       \$%.2f\n", $lowest_price;
 $lowest_fprice = $lowest_fprice == 0 ? "" : sprintf "Foil price:  \$%.2f\n", $lowest_fprice;
 
 my $header = generate_header();

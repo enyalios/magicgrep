@@ -286,6 +286,8 @@ for my $set_code (keys %$tree) {
         $cards{$name}{loyal} = $card->{loyalty};
         $cards{$name}{extras} = undef;
         $cards{$name}{legal} = join ", ", map { $_->{legality} . " in " . $_->{format} } @{$card->{legalities}};
+        $cards{$name}{reserved} = 1 if defined $card->{reserved};
+        $cards{$name}{timeshifted} = 1 if defined $card->{timeshifted};
         if(defined $card->{colors} && (colors_to_string(@{$card->{colors}}) ne cost_to_colors($card->{manaCost}))) {
             push @{$cards{$name}{extras}}, join("/", @{$card->{colors}}) . " color indicator.";
         }
@@ -378,6 +380,8 @@ for(sort keys %cards) {
     $fulltext .= "\n";
     $fulltext .= "Set/Rarity:  " . join(", ", uniq map { $_->[1] } sort { $a->[0] cmp $b->[0] } @{$card{set}}) . "\n";
     $fulltext .= "Legality:    $card{legal}\n";
+    $fulltext .= "Reserved:    true\n" if defined $card{reserved};
+    $fulltext .= "Timeshifted: true\n" if defined $card{timeshifted};
 
     if($card_names{$_}) {
         $update->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $_);

@@ -43,7 +43,7 @@ Content-Type: text/html
             To find legendary dragons with ETB triggers, try <a class="code" href="index.cgi?q=^type.*legendary.*dragon 'when ~ enters the battlefield'">^type.*legendary.*dragon 'when ~ enters the battlefield'</a>.
             <br /><br />
             Due to technical reasons, you can't match against the price field, but there are some hidden fields that you can match against.
-            'CMC' has a card's converted mana cost, 'Color' is the cards color, 'CID' is its color identity (used for the <a href="http://mtgcommander.net">commander format</a>), and 'Legality' is its status in each format.
+            'CMC' has a card's converted mana cost, 'Color' is the cards color, 'CID' is its color identity (used for the <a href="http://mtgcommander.net">commander format</a>), 'Legality' is its status in each format, 'Reserved' is its reserved list status, and 'Timeshifted' is if the card has ever been printed in a timeshifted frame.
             <a class="code" href="index.cgi?q='^cmc: *10\$' ^cid:.*g">'^cmc: *10\$' ^cid:.*g</a> searches for 10 mana cards with green in their color identity.
             <br /><br />
             To find cards to go in your white and black commander deck try searching for something like <a class="code" href="index.cgi?q='^cid%3A *[wb]*%24' 'legal in commander'">'^cid: *[wb]*\$' 'legal in commander'</a>.
