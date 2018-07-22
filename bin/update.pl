@@ -203,6 +203,50 @@ sub color_sort_order {
     die "should not have gotten here";
 }
 
+sub color_array_to_sorted_string {
+    my $array = [@{$_[0]}];
+    my %word_to_letter = qw(
+        White W
+        Blue  U
+        Black B
+        Red   R
+        Green G
+    );
+    my %letter_to_sort_index = qw(
+        W 1
+        U 2
+        B 3
+        R 4
+        G 5
+    );
+    my %reorder = qw(
+        WR RW
+        WG GW
+        UG GU
+        WUG GWU
+        WUR UWR
+        WBR RWB
+        WRG RGW
+        UBG BGU
+        URG GUR
+        WUBG GWUB
+        WURG RGWU
+        WBRG BRGW
+    );
+
+    for(@$array){ $_ = $word_to_letter{$_} // $_ } # fix
+
+    my $string = join "",
+    map { $_->[0] }
+    sort { $a->[1] <=> $b->[1] }
+    map { [ $_, $letter_to_sort_index{$_} ] } # fix
+    @$array;
+
+    $string = $reorder{$string} // $string;
+
+    return $string;
+}
+
 
 my $num_cards = "0";
 
@@ -212,7 +256,7 @@ print "downloading...\n";
 
 my (%cards, @by_set);
 my $blob = join "", `wget -O - "$url" | funzip`;
-#my $blob = join "", `cat AllSets-x.json.zip | funzip`;
+#my $blob = join "", `cat local/AllSets-x.json.zip | funzip`;
 while(my ($key, $value) = each %char_trans) {
     $blob =~ s/$key/$value/g;
 }
@@ -236,7 +280,8 @@ for my $set_code (keys %$tree) {
         $cards{$name}{text} = $card->{text};
         push @{$cards{$name}{set}}, [ $set_release, $set_name . " " . $card->{rarity} ];
         $cards{$name}{cmc}  = $card->{cmc};
-        $cards{$name}{cid}  = join "", @{$card->{colorIdentity}} if defined $card->{colorIdentity};
+        $cards{$name}{cid} = color_array_to_sorted_string($card->{colorIdentity}) if defined $card->{colorIdentity};
+        $cards{$name}{color} = color_array_to_sorted_string($card->{colors}) if defined $card->{colors};
         $cards{$name}{color_sort} = color_sort_order($card);
         $cards{$name}{loyal} = $card->{loyalty};
         $cards{$name}{extras} = undef;
@@ -316,6 +361,7 @@ for(sort keys %cards) {
     $card{cost} =~ s/\{([WUBRGXC\d]+)\}/$1/g;
     $card{text} =~ s/\{?(CHAOS)\}?/{$1}/g;
     $card{cmc} //= "";
+    $card{color} //= "";
     $card{cid} //= "";
     # find the first printing that wasnt in a 'Special' set
     my $date = (sort map { $_->[0] } grep { $_->[1] !~ /(Prerelease Events|Media Inserts|Launch Parties|Arena League|Judge Gift Program|Friday Night Magic|Magic Player Rewards) Special/ } @{$card{set}})[0];
@@ -323,6 +369,7 @@ for(sort keys %cards) {
     my $fulltext = "Name:        $card{name}\n";
     $fulltext .= "Cost:        $card{cost}\n" unless $card{cost} eq "";
     $fulltext .= "CMC:         $card{cmc}\n";
+    $fulltext .= "Color:       $card{color}\n";
     $fulltext .= "CID:         $card{cid}\n";
     $fulltext .= "Type:        $card{type_line}\n";
     $fulltext .= "Pow/Tgh:     $card{size}\n" if defined $card{size};

@@ -52,7 +52,7 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     } else {
         $price = "<span onclick='price(this, \"$price_name\")'><a href='javascript:return false;'>Click to Lookup</a></span>"
     }
-    $full_text =~ s/^(CMC|CID|Legality): .*\n//mg; # dont show some fields
+    $full_text =~ s/^(CMC|Color|CID|Legality): .*\n//mg; # dont show some fields
     # this craziness wraps the lines to 80 columns
     1 while $full_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
     chomp $full_text;

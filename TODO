@@ -9,7 +9,6 @@ stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use the back button
 saving decklists/collections
-add a hidden field 'color' to each card
 move everything to behind https
 make the cookie timeout refresh with every page view
 make the search bar change colors when focused
@@ -68,3 +67,5 @@ make sort by color put mono color first, then multicolor, then hybrid
 switch the color sort to sort by color and not color identity
 the stats page can now sort by different fields
 fix negated regexs that use ~
+add a hidden field 'color' to each card
+fix sort order of the letters in the color and cid fields
