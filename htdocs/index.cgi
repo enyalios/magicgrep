@@ -67,6 +67,7 @@ Content-Type: text/html
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+        <link rel="shortcut icon" href="favicon.ico">
         <title>$title</title>
         <link rel="stylesheet" type="text/css" href="mystyle.css">
         <script>
