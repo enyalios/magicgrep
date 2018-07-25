@@ -234,12 +234,12 @@ sub color_array_to_sorted_string {
         WBRG BRGW
     );
 
-    for(@$array){ $_ = $word_to_letter{$_} // $_ } # fix
+    for(@$array){ $_ = $word_to_letter{$_} // $_ }
 
     my $string = join "",
     map { $_->[0] }
     sort { $a->[1] <=> $b->[1] }
-    map { [ $_, $letter_to_sort_index{$_} ] } # fix
+    map { [ $_, $letter_to_sort_index{$_} ] }
     @$array;
 
     $string = $reorder{$string} // $string;
