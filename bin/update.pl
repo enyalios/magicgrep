@@ -4,7 +4,7 @@
 
 use strict;
 use warnings;
-use LWP::Simple;
+use LWP::UserAgent;
 use JSON;
 #use List::Util 'any'; # needs version 1.33
 use FindBin '$Bin';
@@ -12,10 +12,13 @@ use lib "$Bin/../lib";
 use Magic;
 
 # tweak this depending on where you want to store your data
-my $url = "https://mtgjson.com/json/AllSets-x.json.zip";
-my $version_url = "http://mtgjson.com/json/version.json";
+my $url = "https://mtgjson.com/json/AllSets.json.bz2";
+my $version_url = "https://mtgjson.com/json/version.json";
 my $version_file = "$Bin/../db/version.txt";
 $| = 1;
+
+my $ua = LWP::UserAgent->new(agent => "Mozilla");
+sub get { return $ua->get($_[0])->decoded_content; }
 
 my %set_trans = (
     "Modern Masters 2015 Edition" => "Modern Masters 2015",
@@ -69,6 +72,7 @@ my %set_trans = (
     "Two-Headed Giant Tournament" => "Arena Promos",
     "Happy Holidays" => "Special Occasion",
     "Champs and States" => "Champs Promos",
+    "Ultimate Box Topper" => "Ultimate Masters: Box Toppers",
 );
 
 my %char_trans = (
@@ -95,26 +99,13 @@ sub uniq {
     return grep { !$seen{$_}++ } @_;
 }
 
-sub colors_to_string {
-    my $string = "";
-    my %colors = qw(
-        White W
-        Blue  U
-        Black B
-        Red   R
-        Green G
-    );
-    $string .= $colors{$_} for @_;
-    return $string;
-}
-
 sub cost_to_colors {
-    my $string = "";
+    my @array = ();
     return "" unless length $_[0];
     for(split //, "WUBRG") {
-        $string .= $_ if $_[0] =~ /$_/i;
+        push(@array, $_) if $_[0] =~ /$_/i;
     }
-    return $string;
+    return color_array_to_sorted_string(\@array);
 }
 
 sub check_version {
@@ -124,7 +115,7 @@ sub check_version {
         chomp($local_version = <$fh>);
         close $fh;
     }
-    chomp(my $remote_version = get $version_url);
+    chomp(my $remote_version = decode_json(get $version_url)->{version});
     if($local_version eq $remote_version ) {
         if(!defined $ARGV[0] || $ARGV[0] ne "-f") {
             print "mtgjson version hasn't changed, exiting\n";
@@ -154,14 +145,6 @@ sub color_sort_order {
     # 10 = non-basic lands
     # 11 = basic lands
 
-    my %letter_to_color = qw(
-    W White
-    U Blue
-    B Black
-    R Red
-    G Green
-    );
-
     my $card = $_[0];
 
     return 8 if $card->{layout} eq "split";
@@ -174,7 +157,7 @@ sub color_sort_order {
     @colors = @{$card->{colors}} if defined $card->{colors};
     if(defined $card->{manaCost}) {
         for(split //, $card->{manaCost}) {
-            push @colors, $letter_to_color{$_} if defined $letter_to_color{$_};
+            push @colors, $_ if $_ =~ /^[WUBRG]$/;
         }
         @colors = uniq @colors;
     }
@@ -183,11 +166,11 @@ sub color_sort_order {
         if(@colors == 1){
             # if it has exactly one color
             # put the colors in the right order
-            return 1 if $colors[0] eq "White";
-            return 2 if $colors[0] eq "Blue";
-            return 3 if $colors[0] eq "Black";
-            return 4 if $colors[0] eq "Red";
-            return 5 if $colors[0] eq "Green";
+            return 1 if $colors[0] eq "W";
+            return 2 if $colors[0] eq "U";
+            return 3 if $colors[0] eq "B";
+            return 4 if $colors[0] eq "R";
+            return 5 if $colors[0] eq "G";
             die "unknown color '$colors[0]' for card $card->{name}";
         } else {
             # if we have more than one color
@@ -205,13 +188,6 @@ sub color_sort_order {
 
 sub color_array_to_sorted_string {
     my $array = [@{$_[0]}];
-    my %word_to_letter = qw(
-        White W
-        Blue  U
-        Black B
-        Red   R
-        Green G
-    );
     my %letter_to_sort_index = qw(
         W 1
         U 2
@@ -234,8 +210,6 @@ sub color_array_to_sorted_string {
         WBRG BRGW
     );
 
-    for(@$array){ $_ = $word_to_letter{$_} // $_ }
-
     my $string = join "",
     map { $_->[0] }
     sort { $a->[1] <=> $b->[1] }
@@ -255,8 +229,8 @@ check_version();
 print "downloading...\n";
 
 my (%cards, @by_set);
-my $blob = join "", `wget -O - "$url" | funzip`;
-#my $blob = join "", `cat local/AllSets-x.json.zip | funzip`;
+my $blob = join "", `wget -O - "$url" | bzcat`;
+#my $blob = join "", `cat local/AllSets.json.bz2 | bzcat`;
 while(my ($key, $value) = each %char_trans) {
     $blob =~ s/$key/$value/g;
 }
@@ -279,19 +253,19 @@ for my $set_code (keys %$tree) {
         }
         $cards{$name}{text} = $card->{text};
         push @{$cards{$name}{set}}, [ $set_release, $set_name . " " . $card->{rarity} ];
-        $cards{$name}{cmc}  = $card->{cmc};
+        $cards{$name}{cmc}  = $card->{convertedManaCost};
         $cards{$name}{cid} = color_array_to_sorted_string($card->{colorIdentity}) if defined $card->{colorIdentity};
         $cards{$name}{color} = color_array_to_sorted_string($card->{colors}) if defined $card->{colors};
         $cards{$name}{color_sort} = color_sort_order($card);
         $cards{$name}{loyal} = $card->{loyalty};
         $cards{$name}{extras} = undef;
-        $cards{$name}{legal} = join ", ", map { $_->{legality} . " in " . $_->{format} } @{$card->{legalities}};
-        $cards{$name}{reserved} = 1 if defined $card->{reserved};
-        $cards{$name}{timeshifted} = 1 if defined $card->{timeshifted};
-        if(defined $card->{colors} && (colors_to_string(@{$card->{colors}}) ne cost_to_colors($card->{manaCost}))) {
+        $cards{$name}{legal} = join ", ", map { $card->{legalities}->{$_} . " in " . $_ } keys %{$card->{legalities}};
+        $cards{$name}{reserved} = 1 if defined $card->{isReserved};
+        $cards{$name}{timeshifted} = 1 if defined $card->{isTimeshifted};
+        if(defined $card->{colors} && @{$card->{colors}} && $card->{layout} ne "flip" && (color_array_to_sorted_string($card->{colors}) ne cost_to_colors($card->{manaCost}))) {
             push @{$cards{$name}{extras}}, join("/", @{$card->{colors}}) . " color indicator.";
         }
-        if($card->{layout} eq "vanguard") {
+        if($card->{layout} eq "vanguard" && 0) {
             my $hand = $card->{hand};
             my $life = $card->{life};
             $hand = "+$hand" if $hand >= 0;
@@ -302,7 +276,7 @@ for my $set_code (keys %$tree) {
             if($card->{layout} eq "split" || $card->{layout} eq "aftermath") {
                 push @{$cards{$name}{extras}}, "This is half of the split card " . join(" // ", @{$card->{names}}) . ".";
                 $cards{$name}{art_name} = $cards{$name}{price_name} = join(" // ", @{$card->{names}});
-            } elsif($card->{layout} eq "double-faced") {
+            } elsif($card->{layout} eq "transform") {
                 if($card->{names}->[0] eq $name) {
                     push @{$cards{$name}{extras}}, "Front face. Transforms into " . $card->{names}->[1] . ".";
                 } else {
@@ -326,17 +300,17 @@ for my $set_code (keys %$tree) {
                 }
             } else {
                 push @{$cards{$name}{extras}}, "Related to " .
-                join(", ", grep { $_ ne $name } @{$card->{names}}) . ".";
+                join(", ", grep { $_ ne $name } @{$card->{names}}) . "." if @{$card->{names}};
             }
         }
-        unless($tree->{$set_code}->{onlineOnly}) {
+        unless($tree->{$set_code}->{isOnlineOnly}) {
             my $set = $set_name;
             $set = $set_trans{$set} if $set_trans{$set};
             if($cards{$name}{simple_type} =~ /^(Scheme|Plane|Phenomenon)$/) {
                 $cards{$name}{price_name} = "$name ($set)";
                 $set = "Oversize Cards";
             }
-            my $mid = $card->{multiverseid};
+            my $mid = $card->{multiverseId};
             $mid = 0 unless defined $mid;
             push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid ];
         }
