@@ -21,14 +21,12 @@ my $ua = LWP::UserAgent->new(agent => "Mozilla");
 sub get { return $ua->get($_[0])->decoded_content; }
 
 my %set_trans = (
-    "Modern Masters 2015 Edition" => "Modern Masters 2015",
-    "Modern Masters 2017 Edition" => "Modern Masters 2017",
     "Magic 2010" => "Magic 2010 (M10)",
     "Magic 2011" => "Magic 2011 (M11)",
     "Magic 2012" => "Magic 2012 (M12)",
     "Magic 2013" => "Magic 2013 (M13)",
-    "Magic 2014 Core Set" => "Magic 2014 (M14)",
-    "Magic 2015 Core Set" => "Magic 2015 (M15)",
+    "Magic 2014" => "Magic 2014 (M14)",
+    "Magic 2015" => "Magic 2015 (M15)",
     "Limited Edition Alpha" => "Alpha Edition",
     "Limited Edition Beta" => "Beta Edition",
     "Time Spiral \"Timeshifted\"" => "Timeshifted",
@@ -52,6 +50,7 @@ my %set_trans = (
     "Magic: The Gathering-Commander" => "Commander",
     "Duel Decks Anthology, Divine vs. Demonic" => "Duel Decks: Divine vs. Demonic",
     "Magic: The Gathering--Conspiracy" => "Conspiracy",
+    "Commander 2011" => "Commander",
     "Commander 2013 Edition" => "Commander 2013",
     "Wizards Play Network" => "WPN %26 Gateway Promos",
     "Gateway" => "WPN %26 Gateway Promos",
@@ -72,6 +71,7 @@ my %set_trans = (
     "Happy Holidays" => "Special Occasion",
     "Champs and States" => "Champs Promos",
     "Ultimate Box Topper" => "Ultimate Masters: Box Toppers",
+    "Time Spiral Timeshifted" => "Timeshifted",
 );
 
 my %char_trans = (
