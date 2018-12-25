@@ -49,7 +49,6 @@ my %set_trans = (
     "International Collector's Edition" => "International Edition",
     "Deckmasters" => "Deckmasters Garfield vs Finkel",
     "Grand Prix" => "Grand Prix Promos",
-    "Ravnica: City of Guilds" => "Ravnica",
     "Magic: The Gathering-Commander" => "Commander",
     "Duel Decks Anthology, Divine vs. Demonic" => "Duel Decks: Divine vs. Demonic",
     "Magic: The Gathering--Conspiracy" => "Conspiracy",
