@@ -319,9 +319,10 @@ for my $set_code (keys %$tree) {
 print "inserting cards...\n";
 my $dbh = get_db_handle();
 my %card_names = map { $_ => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
-my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ? WHERE name = ?");
+my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)");
+my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ?, stale = 0 WHERE name = ?");
 $dbh->do("BEGIN TRANSACTION");
+$dbh->do("UPDATE cards SET stale = 1");
 my $i = 0;
 my $total = keys %cards;
 for(sort keys %cards) {
@@ -369,7 +370,14 @@ $dbh->do("COMMIT");
 print "inserting sets...\n";
 my $sth = $dbh->prepare("INSERT OR IGNORE INTO printings (card_name, price_name, set_name, mid) VALUES (?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
+$dbh->do("UPDATE printings SET stale = 1");
 $sth->execute($_->[0], $_->[1], $_->[2], $_->[3]) for @by_set;
+$dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND mid = ?", {}, $_->[0], $_->[2], $_->[3]) for @by_set;
 $dbh->do("COMMIT");
+
+(my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");
+print "$stale stale card(s)\n" if $stale;
+($stale) = $dbh->selectrow_array("SELECT count(*) FROM printings WHERE stale = 1");
+print "$stale stale printing(s)\n" if $stale;
 
 $dbh->disconnect;
