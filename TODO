@@ -14,7 +14,9 @@ make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
 make the sort field default to something like 'sort by'
-make a stale column in the printings and cards tables to track when things dissappear
+expose the compact interface in the ui and make pagination work
+fix all the promo set names so the prices show up
+confirm that magic online only printings arent showing up
 
 # completed
 make the url update as you search
@@ -70,3 +72,4 @@ add a hidden field 'color' to each card
 fix sort order of the letters in the color and cid fields
 add a timeshifted field for cards that have ever had a timeshifted frame
 add a reserved field for cards on the reserved list
+make a stale column in the printings and cards tables to track when things dissappear
