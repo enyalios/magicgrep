@@ -9,7 +9,7 @@ use Magic;
 use URI::Escape;
 
 my $header = generate_header('Lists');
-my $staples_file = "/home/enyalios/magic/staples.txt";
+my $staples_file = "../local/staples.txt";
 my %staples;
 my $tag;
 
