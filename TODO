@@ -17,6 +17,7 @@ make the sort field default to something like 'sort by'
 expose the compact interface in the ui and make pagination work
 fix all the promo set names so the prices show up
 confirm that magic online only printings arent showing up
+add the edh, tcg, ms links to the card.cgi page
 
 # completed
 make the url update as you search
