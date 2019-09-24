@@ -340,7 +340,7 @@ for(sort keys %cards) {
     $card{color} //= "";
     $card{cid} //= "";
     # find the first printing that wasnt in a 'Special' set
-    my $date = (sort map { $_->[0] } grep { $_->[1] !~ /(Prerelease Events|Media Inserts|Launch Parties|Arena League|Judge Gift Program|Friday Night Magic|Magic Player Rewards) Special/ } @{$card{set}})[0];
+    my $date = (sort map { $_->[0] } grep { $_->[1] !~ /((Prerelease Events|Media Inserts|Launch Parties|Arena League|Judge Gift Program|Friday Night Magic|Magic Player Rewards) Special|\bPromos\b)/ } @{$card{set}})[0];
 
     my $fulltext = "Name:        $card{name}\n";
     $fulltext .= "Cost:        $card{cost}\n" unless $card{cost} eq "";
