@@ -114,7 +114,7 @@ sub check_version {
         chomp($local_version = <$fh>);
         close $fh;
     }
-    chomp(my $remote_version = decode_json(get $version_url)->{version});
+    chomp(my $remote_version = decode_json(get $version_url)->{date});
     if($local_version eq $remote_version ) {
         if(!defined $ARGV[0] || $ARGV[0] ne "-f") {
             print "mtgjson version hasn't changed, exiting\n";
