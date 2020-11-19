@@ -228,7 +228,9 @@ check_version();
 print "downloading...\n";
 
 my (%cards, @by_set);
-my $blob = join "", `wget -O - "$url" | bzcat`;
+my $quiet = "--quiet";
+$quiet = "" if -t STDOUT;
+my $blob = join "", `wget $quiet -O - "$url" | bzcat`;
 #my $blob = join "", `cat local/AllSets.json.bz2 | bzcat`;
 while(my ($key, $value) = each %char_trans) {
     $blob =~ s/$key/$value/g;
@@ -376,8 +378,10 @@ $dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AN
 $dbh->do("COMMIT");
 
 (my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");
-print "$stale stale card(s)\n" if $stale;
+print "deleted $stale stale card(s)\n" if $stale;
+$dbh->do("DELETE FROM cards WHERE stale = 1");
 ($stale) = $dbh->selectrow_array("SELECT count(*) FROM printings WHERE stale = 1");
-print "$stale stale printing(s)\n" if $stale;
+print "deleted $stale stale printing(s)\n" if $stale;
+$dbh->do("DELETE FROM printings WHERE stale = 1");
 
 $dbh->disconnect;
