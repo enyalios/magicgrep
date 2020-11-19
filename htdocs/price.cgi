@@ -32,6 +32,7 @@ sub get_price {
     my $content = get $url;
     #print "getting <$url>\n";
     my $tree = XMLin $content;
+    print "card = $card\nset = $set\nurl = $url\ncontent = $content\n" unless $tree;
 
     my $price = $tree->{product}->{avgprice} // 0;
     my $fprice = $tree->{product}->{foilavgprice} // 0;
