@@ -12,8 +12,8 @@ use lib "$Bin/../lib";
 use Magic;
 
 # tweak this depending on where you want to store your data
-my $url = "https://mtgjson.com/json/AllSets.json.bz2";
-my $version_url = "https://mtgjson.com/json/version.json";
+my $url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
+my $version_url = "https://mtgjson.com/api/v5/Meta.json";
 my $version_file = "$Bin/../db/version.txt";
 $| = 1;
 
@@ -114,7 +114,7 @@ sub check_version {
         chomp($local_version = <$fh>);
         close $fh;
     }
-    chomp(my $remote_version = decode_json(get $version_url)->{date});
+    chomp(my $remote_version = decode_json(get $version_url)->{data}->{version});
     if($local_version eq $remote_version ) {
         if(!defined $ARGV[0] || $ARGV[0] ne "-f") {
             print "mtgjson version hasn't changed, exiting\n";
@@ -231,12 +231,12 @@ my (%cards, @by_set);
 my $quiet = "--quiet";
 $quiet = "" if -t STDOUT;
 my $blob = join "", `wget $quiet -O - "$url" | bzcat`;
-#my $blob = join "", `cat local/AllSets.json.bz2 | bzcat`;
+#my $blob = join "", `bzcat local/AllPrintings.json.bz2`;
 while(my ($key, $value) = each %char_trans) {
     $blob =~ s/$key/$value/g;
 }
 print "parsing...\n";
-my $tree = decode_json($blob);
+my $tree = decode_json($blob)->{data};
 for my $set_code (keys %$tree) {
     my $set_name = $tree->{$set_code}->{name};
     my $set_release = $tree->{$set_code}->{releaseDate};
@@ -273,7 +273,7 @@ for my $set_code (keys %$tree) {
             $life = "+$life" if $life >= 0;
             $cards{$name}{text} = "$hand cards / $life life\n" . $cards{$name}{text};
         }
-        if(defined $card->{names}) {
+        if(defined $card->{names}) { # this should be changed to $card->{otherFaceIds}
             if($card->{layout} eq "split" || $card->{layout} eq "aftermath") {
                 push @{$cards{$name}{extras}}, "This is half of the split card " . join(" // ", @{$card->{names}}) . ".";
                 $cards{$name}{art_name} = $cards{$name}{price_name} = join(" // ", @{$card->{names}});
@@ -311,7 +311,7 @@ for my $set_code (keys %$tree) {
                 $cards{$name}{price_name} = "$name ($set)";
                 $set = "Oversize Cards";
             }
-            my $mid = $card->{multiverseId};
+            my $mid = $card->{identifiers}->{multiverseId};
             $mid = 0 unless defined $mid;
             push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid ];
         }
