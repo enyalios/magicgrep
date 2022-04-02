@@ -72,6 +72,19 @@ my %set_trans = (
     "Champs and States" => "Champs Promos",
     "Ultimate Box Topper" => "Ultimate Masters: Box Toppers",
     "Time Spiral Timeshifted" => "Timeshifted",
+    "Time Spiral Remastered" => "Time Spiral: Remastered",
+    "Forgotten Realms Commander" => "Commander: Adventures in the Forgotten Realms",
+    "Crimson Vow Commander" => "Commander: Innistrad: Crimson Vow",
+    "Midnight Hunt Commander" => "Commander: Innistrad: Midnight Hunt",
+    "Neon Dynasty Commander" => "Commander: Kamigawa: Neon Dynasty",
+    "Zendikar Rising Commander" => "Commander: Zendikar Rising",
+    "RNA Guild Kit" => "Ravnica Allegiance: Guild Kits",
+    "GRN Guild Kit" => "Guilds of Ravnica: Guild Kits",
+    "Kaldheim Commander" => "Commander: Kaldheim",
+    "Secret Lair Drop" => "Secret Lair Drop Series",
+    "Strixhaven Mystical Archive" => "Strixhaven: Mystical Archives",
+    "Kaladesh Inventions" => "Masterpiece Series: Kaladesh Inventions",
+    "Amonkhet Invocations" => "Masterpiece Series: Amonkhet Invocations",
 );
 
 my %char_trans = (
