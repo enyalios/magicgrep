@@ -2,22 +2,18 @@ display the card text with tables, rather than <pre>
 make buttons to select or deselect colors
 make an advanced search page to help build complex queries
 make the sort button line up correctly
-make sort by type put all creatures together or something
 make it so card.cgi can show a single printing of a card
 make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
 figure out why the search field doesnt match the url sometimes when you use the back button
 saving decklists/collections
-move everything to behind https
 make the cookie timeout refresh with every page view
 make the search bar change colors when focused
 alternate background colors when displaying search results
 make the sort field default to something like 'sort by'
-expose the compact interface in the ui and make pagination work
 fix all the promo set names so the prices show up
 confirm that magic online only printings arent showing up
-add the edh, tcg, ms links to the card.cgi page
 
 # completed
 make the url update as you search
@@ -74,3 +70,7 @@ fix sort order of the letters in the color and cid fields
 add a timeshifted field for cards that have ever had a timeshifted frame
 add a reserved field for cards on the reserved list
 make a stale column in the printings and cards tables to track when things dissappear
+make sort by type put all creatures together or something
+move everything to behind https
+expose the compact interface in the ui and make pagination work
+add the edh, tcg, ms links to the card.cgi page
