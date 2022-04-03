@@ -107,7 +107,7 @@ sub get_username {
 }
 
 sub image_handler {
-    return "http://gatherer.wizards.com/Handlers/Image.ashx";
+    return "https://gatherer.wizards.com/Handlers/Image.ashx";
 }
 
 1;
