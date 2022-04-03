@@ -36,6 +36,11 @@ form {
     font-size: 12pt;
     float: right;
     }
+#compact {
+    float: right;
+    width: 25px;
+    height: 25px;
+}
 .tabs {
     float: right;
     padding: 5px 10px 0px 10px;

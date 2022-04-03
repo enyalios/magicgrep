@@ -79,9 +79,10 @@ $dbh->disconnect;
 
 # print out a count at the end
 $sort = ($sort eq "name") ? "" : "&sort=$sort";
-my $prev = sprintf "<a href='?page=%d%s&q=%s'>&lt; prev</a> ", $page - 1, $sort, $escaped_query;
+$compact = ($compact == 0) ? "" : "&compact=$compact";
+my $prev = sprintf "<a href='?page=%d%s%s&q=%s'>&lt; prev</a> ", $page - 1, $sort, $compact, $escaped_query;
 $prev = "" if $page == 1;
-my $next = sprintf " <a href='?page=%d%s&q=%s'>next &gt;</a>", $page + 1, $sort, $escaped_query;
+my $next = sprintf " <a href='?page=%d%s%s&q=%s'>next &gt;</a>", $page + 1, $sort, $compact, $escaped_query;
 $next = "" if $card_start + $shown_cards - 1 == $num_cards;
 my $showing = sprintf "%d - %d of ", $card_start, $card_start + $shown_cards - 1;
 $showing = "" if $shown_cards == $num_cards;
