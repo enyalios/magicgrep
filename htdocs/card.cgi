@@ -8,6 +8,7 @@ use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
 use HTML::Entities;
+use URI::Escape;
 
 my $card = param("card") // "";
 my $safe_name = encode_entities($card);
@@ -15,8 +16,8 @@ my $safe_name = encode_entities($card);
 my $dbh = get_db_handle();
 my $card_ref = $dbh->selectrow_arrayref("SELECT full_text, name, price_name FROM cards WHERE name = ?", {}, $card);
 my $card_text = $card_ref->[0];
-my $escaped_name = $card_ref->[1];
-my $price_name = $card_ref->[2];
+my $escaped_name = uri_escape $card_ref->[1];
+my $price_name = uri_escape $card_ref->[2];
 # this craziness wraps the lines to 80 columns
 1 while $card_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
 
