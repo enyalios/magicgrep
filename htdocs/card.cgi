@@ -11,18 +11,19 @@ use HTML::Entities;
 use URI::Escape;
 
 my $card = param("card") // "";
-my $safe_name = encode_entities($card);
 
 my $dbh = get_db_handle();
-my $card_ref = $dbh->selectrow_arrayref("SELECT full_text, name, price_name FROM cards WHERE name = ?", {}, $card);
+my $card_ref = $dbh->selectrow_arrayref("SELECT full_text, name, price_name FROM cards WHERE name LIKE ?", {}, $card);
 my $card_text = $card_ref->[0];
-my $escaped_name = uri_escape $card_ref->[1];
+$card = $card_ref->[1];
+my $uri_safe_name = uri_escape $card;
 my $price_name = uri_escape $card_ref->[2];
 # this craziness wraps the lines to 80 columns
 1 while $card_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
 
 my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, price, fprice FROM printings WHERE card_name = ? ORDER BY mid");
 $printings_sth->execute($card);
+my $html_safe_name = encode_entities($card);
 
 my $card_list;
 my $lowest_price = my $lowest_fprice = 0;
@@ -59,7 +60,7 @@ $lowest_fprice = $lowest_fprice == 0 ? "" : sprintf "Foil price:  \$%.2f\n", $lo
 
 my $header = generate_header();
 
-my $links = "<a class='link' href='https://edhrec.com/route?cc=$escaped_name'>EDH</a>";
+my $links = "<a class='link' href='https://edhrec.com/route?cc=$uri_safe_name'>EDH</a>";
 $links .= "<a class='link' href='http://shop.tcgplayer.com/magic/product/show?ProductName=$price_name&IsProductNameExact=true'>TCG</a>";
 $links .= "<a class='link' href='http://enyalios.net/cgi-bin/mtgstocks.cgi?q=$price_name'>MS</a>";
 
@@ -70,12 +71,12 @@ Content-Type: text/html
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="mystyle.css">
-        <title>$safe_name</title>
+        <title>$html_safe_name</title>
     </head>
     <body>
         $header
         <div class="main">
-            <div class="big">$safe_name</div>
+            <div class="big">$html_safe_name</div>
             <div class="carddetail">${card_text}${lowest_price}${lowest_fprice}</div>
             $links
             <br />
