@@ -11,6 +11,7 @@ use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
 
+$| = 1;
 my $dbh = get_db_handle();
 my $cgi = defined $ENV{REMOTE_ADDR} ? 1 : 0;
 my $sth = $dbh->prepare("UPDATE printings SET price = ?, fprice = ? WHERE price_name = ? AND set_name = ?");
