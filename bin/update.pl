@@ -85,6 +85,14 @@ my %set_trans = (
     "Strixhaven Mystical Archive" => "Strixhaven: Mystical Archives",
     "Kaladesh Inventions" => "Masterpiece Series: Kaladesh Inventions",
     "Amonkhet Invocations" => "Masterpiece Series: Amonkhet Invocations",
+    "New Capenna Commander" => "Commander: Streets of New Capenna",
+    "Dominaria United Commander" => "Commander: Dominaria United",
+    "Warhammer 40,000 Commander" => "Universes Beyond: Warhammer 40,000",
+    "The Brothers' War Commander" => "Commander: The Brothers' War",
+    "Phyrexia: All Will Be One Commander" => "Commander: Phyrexia: All Will Be One",
+    "March of the Machine Commander" => "Commander: March of the Machine",
+    "The Lord of the Rings: Tales of Middle-earth" => "Universes Beyond: The Lord of the Rings: Tales of Middle-earth",
+    "Tales of Middle-earth Commander" => "Commander: The Lord of the Rings: Tales of Middle-earth",
 );
 
 my %char_trans = (
