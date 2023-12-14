@@ -14,6 +14,10 @@ alternate background colors when displaying search results
 make the sort field default to something like 'sort by'
 fix all the promo set names so the prices show up
 confirm that magic online only printings arent showing up
+make double face cards show up properly, only one face seems searchable
+add the ability to search for specific printings not just all printings of a card
+get price data from mtgjson since the tcgplayer api stopped working
+add a second name field for cards with non-ascii characters
 
 # completed
 make the url update as you search
