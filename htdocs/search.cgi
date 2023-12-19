@@ -47,10 +47,10 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     my $escaped_name = uri_escape($name);
     my $art_name = uri_escape($art_name);
     my $price_name = uri_escape($price_name);
-    if(defined $price && $price > 0 && defined $price_updated && $epoch - $price_updated < $one_week) {
+    if(defined $price && $price > 0) {
         $price = sprintf "\$%4.2f", $price;
     } else {
-        $price = "<span onclick='price(this, \"$price_name\")'><a href='javascript:return false;'>Click to Lookup</a></span>"
+        $price = "???"
     }
     $full_text =~ s/^(CMC|Color|CID|Legality|Reserved|Timeshifted): .*\n//mg; # dont show some fields
     # this craziness wraps the lines to 80 columns

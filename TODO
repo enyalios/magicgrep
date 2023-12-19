@@ -16,8 +16,8 @@ fix all the promo set names so the prices show up
 confirm that magic online only printings arent showing up
 make double face cards show up properly, only one face seems searchable
 add the ability to search for specific printings not just all printings of a card
-get price data from mtgjson since the tcgplayer api stopped working
 add a second name field for cards with non-ascii characters
+speed up price data insertion, maybe re-order things and have it inserted along with the card data
 
 # completed
 make the url update as you search
@@ -78,3 +78,4 @@ make sort by type put all creatures together or something
 move everything to behind https
 expose the compact interface in the ui and make pagination work
 add the edh, tcg, ms links to the card.cgi page
+get price data from mtgjson since the tcgplayer api stopped working

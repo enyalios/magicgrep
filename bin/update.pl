@@ -12,7 +12,8 @@ use lib "$Bin/../lib";
 use Magic;
 
 # tweak this depending on where you want to store your data
-my $url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
+my $printings_url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
+my $prices_url = "https://mtgjson.com/api/v5/AllPricesToday.json.bz2";
 my $version_url = "https://mtgjson.com/api/v5/Meta.json";
 my $version_file = "$Bin/../db/version.txt";
 $| = 1;
@@ -244,23 +245,36 @@ sub color_array_to_sorted_string {
     return $string;
 }
 
+sub download_and_parse {
+    my $url = $_[0];
+    my $quiet = "--quiet";
+    $quiet = "" if -t STDOUT;
+    my $basename = $url;
+    $basename =~ s/.*\///;
+    my $blob;
+    if(-e "local/$basename") {
+        print "Using local copy of $basename\n";
+        $blob = join "", `bzcat local/$basename`;
+    } else {
+        $blob = join "", `wget $quiet -O - "$url" | bzcat`;
+    }
+    while(my ($key, $value) = each %char_trans) {
+        $blob =~ s/$key/$value/g;
+    }
+    print "parsing...\n";
+    my $tree = decode_json($blob);
+    return $tree
+}
+
 
 my $num_cards = "0";
 
 check_version();
 
-print "downloading...\n";
+print "downloading card data...\n";
 
 my (%cards, @by_set);
-my $quiet = "--quiet";
-$quiet = "" if -t STDOUT;
-my $blob = join "", `wget $quiet -O - "$url" | bzcat`;
-#my $blob = join "", `bzcat local/AllPrintings.json.bz2`;
-while(my ($key, $value) = each %char_trans) {
-    $blob =~ s/$key/$value/g;
-}
-print "parsing...\n";
-my $tree = decode_json($blob)->{data};
+my $tree = download_and_parse($printings_url)->{data};
 for my $set_code (keys %$tree) {
     my $set_name = $tree->{$set_code}->{name};
     my $set_release = $tree->{$set_code}->{releaseDate};
@@ -337,9 +351,20 @@ for my $set_code (keys %$tree) {
             }
             my $mid = $card->{identifiers}->{multiverseId};
             $mid = 0 unless defined $mid;
-            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid ];
+            my $jsonid = $card->{uuid};
+            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $jsonid ];
         }
     }
+}
+
+print "downloading price data...\n";
+$tree = download_and_parse($prices_url);
+my $date = $tree->{meta}->{date};
+$tree = $tree->{data};
+my %prices;
+for my $uuid (keys %$tree) {
+    $prices{$uuid}{normal} = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{normal}->{$date};
+    $prices{$uuid}{foil}   = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{foil}->{$date};
 }
 
 print "inserting cards...\n";
@@ -394,11 +419,37 @@ for(sort keys %cards) {
 $dbh->do("COMMIT");
 
 print "inserting sets...\n";
-my $sth = $dbh->prepare("INSERT OR IGNORE INTO printings (card_name, price_name, set_name, mid) VALUES (?, ?, ?, ?)");
+my $sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
-$sth->execute($_->[0], $_->[1], $_->[2], $_->[3]) for @by_set;
+$sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $prices{$_->[4]}{normal}, $prices{$_->[4]}{foil}) for @by_set;
 $dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND mid = ?", {}, $_->[0], $_->[2], $_->[3]) for @by_set;
+$dbh->do("COMMIT");
+
+print "updating price data...\n";
+my %min;
+for(@{$dbh->selectall_arrayref("SELECT price_name, price, fprice FROM printings")}) {
+    my ($name, $normal, $foil) = @{$_};
+    if(defined $normal) {
+        if(!defined $min{$name} || $normal < $min{$name}) {
+            $min{$name} = $normal;
+        }
+    }
+    if(defined $foil) {
+        if(!defined $min{$name} || $foil < $min{$name}) {
+            $min{$name} = $foil;
+        }
+    }
+}
+$sth = $dbh->prepare("UPDATE cards SET price = ? WHERE price_name = ?");
+$dbh->do("BEGIN TRANSACTION");
+$i = 0;
+$total = keys %min;
+for(keys %min) {
+    $sth->execute($min{$_}, $_);
+    printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;
+}
+print "\n";
 $dbh->do("COMMIT");
 
 (my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");
