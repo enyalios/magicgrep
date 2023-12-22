@@ -20,6 +20,7 @@ add a second name field for cards with non-ascii characters
 speed up price data insertion, maybe re-order things and have it inserted along with the card data
 make the alchemy cards not show up
 some cards have blank legality, seem to be all world champion decks (abduction, academy rector)
+force of will price wrong due to world champ decks
 
 # completed
 make the url update as you search
