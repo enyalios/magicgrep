@@ -39,7 +39,7 @@ while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings
         $price_string = "???";
     }
     
-    if($set_name !~ /^(International|Collector's) Edition$/) {
+    if($set_name !~ /^(.*Collector's Edition|World Championship Decks .*)$/) {
         # ignore these sets for lowest price since they arent tourney legal
         $lowest_price = $price if $lowest_price == 0;
         if($price != 0 && $price < $lowest_price) {

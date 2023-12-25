@@ -428,8 +428,11 @@ $dbh->do("COMMIT");
 
 print "updating price data...\n";
 my %min;
-for(@{$dbh->selectall_arrayref("SELECT price_name, price, fprice FROM printings")}) {
-    my ($name, $normal, $foil) = @{$_};
+for(@{$dbh->selectall_arrayref("SELECT price_name, set_name, price, fprice FROM printings")}) {
+    my ($name, $set, $normal, $foil) = @{$_};
+    # skip these non-tournament legal sets so they dont a false low price
+    next if $set =~ /^World Championship Decks .*$/;
+    next if $set =~ /^.*Collectors' Edition$/;
     if(defined $normal) {
         if(!defined $min{$name} || $normal < $min{$name}) {
             $min{$name} = $normal;
