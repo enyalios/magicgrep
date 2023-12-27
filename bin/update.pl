@@ -10,6 +10,7 @@ use JSON;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
+use utf8;
 
 # tweak this depending on where you want to store your data
 my $printings_url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
@@ -97,25 +98,20 @@ my %set_trans = (
 );
 
 my %char_trans = (
-    "\xE2\x80\x94" => "--",
-    "\xE2\x80\xA2" => "-",
-    "\xE2\x88\x92" => "-",
-    "\xE2\x80\x98" => "'",
-    "\xE2\x80\x99" => "'",
-    "\xE2\x88\x9E" => "infinity",
-    "\xC3\xBA" => "u",
-    "\xC3\xA0" => "a",
-    "\xC3\xA1" => "a",
-    "\xC3\xA2" => "a",
-    "\xC3\xA4" => "a",
-    "\xC3\xB3" => "o",
-    "\xC3\xB6" => "o",
-    "\xC3\xBB" => "u",
-    "\xC3\xA9" => "e",
-    "\xC3\x89" => "E",
-    "\xC2\xBD" => ".5",
-    "\xC2\xAE" => "(R)",
-    "\xC3\xAD" => "i",
+    "à" => "a",
+    "á" => "a",
+    "â" => "a",
+    "ä" => "a",
+    "í" => "i",
+    "ó" => "o",
+    "ö" => "o",
+    "û" => "u",
+    "ü" => "u",
+    "ú" => "u",
+    "é" => "e",
+    "É" => "E",
+    "ñ" => "n",
+    "®" => "(R)",
 );
 
 sub uniq {
@@ -258,9 +254,6 @@ sub download_and_parse {
     } else {
         $blob = join "", `wget $quiet -O - "$url" | bzcat`;
     }
-    while(my ($key, $value) = each %char_trans) {
-        $blob =~ s/$key/$value/g;
-    }
     print "parsing...\n";
     my $tree = decode_json($blob);
     return $tree
@@ -297,6 +290,10 @@ for my $set_code (keys %$tree) {
         next if $card->{layout} eq "token";
         my $name = $card->{name};
         $cards{$name}{name} = $name;
+        $cards{$name}{simple_name} = $name;
+        while(my ($key, $value) = each %char_trans) {
+            $cards{$name}{simple_name} =~ s/$key/$value/g;
+        }
         $cards{$name}{art_name} = $name;
         $cards{$name}{price_name} = $name;
         $cards{$name}{cost} = $card->{manaCost};
@@ -377,9 +374,7 @@ for my $set_code (keys %$tree) {
 
 print "inserting cards...\n";
 my $dbh = get_db_handle();
-my %card_names = map { $_ => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
-my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, price, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
-my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ?, price = ?, stale = 0 WHERE name = ?");
+my $sth = $dbh->prepare("INSERT OR REPLACE INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, price, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE cards SET stale = 1");
 my $i = 0;
@@ -392,6 +387,8 @@ for(sort keys %cards) {
         $card{text} .= "[" . join(" ", @{$card{extras}}) . "]";
     }
     $card{text} =~ s/\n/\n             /g;
+    $card{text} =~ s/—/--/g;
+    $card{type_line} =~ s/—/--/g;
     $card{cost} //= "";
     $card{cost} =~ s/\{([WUBRGXC\d]+)\}/$1/g;
     $card{text} =~ s/\{?(CHAOS)\}?/{$1}/g;
@@ -402,6 +399,7 @@ for(sort keys %cards) {
     my $date = (sort map { $_->[0] } grep { $_->[1] !~ /((Prerelease Events|Media Inserts|Launch Parties|Arena League|Judge Gift Program|Friday Night Magic|Magic Player Rewards) Special|\bPromos\b)/ } @{$card{set}})[0];
 
     my $fulltext = "Name:        $card{name}\n";
+    $fulltext .= "Name:        $card{simple_name}\n" if $card{name} ne $card{simple_name};
     $fulltext .= "Cost:        $card{cost}\n" unless $card{cost} eq "";
     $fulltext .= "CMC:         $card{cmc}\n";
     $fulltext .= "Color:       $card{color}\n";
@@ -416,18 +414,14 @@ for(sort keys %cards) {
     $fulltext .= "Reserved:    True\n" if defined $card{reserved};
     $fulltext .= "Timeshifted: True\n" if defined $card{timeshifted};
 
-    if($card_names{$_}) {
-        $update->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price}, $_);
-    } else {
-        $insert->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price});
-    }
+    $sth->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price});
     #printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;
 }
 #print "\n";
 $dbh->do("COMMIT");
 
 print "inserting sets...\n";
-my $sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
 $sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $prices{$_->[4]}{normal}, $prices{$_->[4]}{foil}) for @by_set;

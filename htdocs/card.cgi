@@ -23,7 +23,7 @@ my $price_name = uri_escape $card_ref->[2];
 
 my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, price, fprice FROM printings WHERE card_name = ? ORDER BY mid");
 $printings_sth->execute($card);
-my $html_safe_name = encode_entities($card);
+my $html_safe_name = encode_entities($card, '\'<>&"');
 
 my $card_list;
 my $lowest_price = my $lowest_fprice = 0;
@@ -70,6 +70,7 @@ Content-Type: text/html
 <!DOCTYPE html>
 <html>
     <head>
+        <meta charset="UTF-8">
         <link rel="stylesheet" type="text/css" href="mystyle.css">
         <title>$html_safe_name</title>
     </head>
