@@ -360,14 +360,6 @@ for my $set_code (keys %$tree) {
         if($set_name !~ /^World Championship Decks .*$/ && $set_name !~ /^.*Collectors' Edition$/) {
             $cards{$name}{price} = min($cards{$name}{price}, $prices{$card->{uuid}}{normal}, $prices{$card->{uuid}}{foil});
         }
-        if($name eq "Worldly Tutor") {
-            printf "%-20s %-20s %5.2f %5.2f %5.2f\n",
-            $name,
-            $set_name,
-            $cards{$name}{price} // "-",
-            $prices{$card->{uuid}}{normal} // "-",
-            $prices{$card->{uuid}}{foil} // "-";
-        }
         unless($tree->{$set_code}->{isOnlineOnly}) {
             my $set = $set_name;
             $set = $set_trans{$set} if $set_trans{$set};
