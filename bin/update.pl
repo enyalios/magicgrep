@@ -249,12 +249,12 @@ sub download_and_parse {
     my $url = $_[0];
     my $quiet = "--quiet";
     $quiet = "" if -t STDOUT;
-    my $basename = $url;
-    $basename =~ s/.*\///;
+    my $localpath = $url;
+    $localpath =~ s/.*\//\/var\/www\/local\//;
     my $blob;
-    if(-e "local/$basename") {
-        print "Using local copy of $basename\n";
-        $blob = join "", `bzcat local/$basename`;
+    if(-e $localpath) {
+        print "using local copy of $localpath\n";
+        $blob = join "", `bzcat $localpath`;
     } else {
         $blob = join "", `wget $quiet -O - "$url" | bzcat`;
     }
@@ -266,15 +266,30 @@ sub download_and_parse {
     return $tree
 }
 
+sub min {
+    my @array = sort { $a <=> $b } grep { defined } @_;
+    return $array[0];
+}
+
 
 my $num_cards = "0";
 
 check_version();
 
-print "downloading card data...\n";
+my (%cards, @by_set, $tree);
 
-my (%cards, @by_set);
-my $tree = download_and_parse($printings_url)->{data};
+print "downloading price data...\n";
+$tree = download_and_parse($prices_url);
+my $date = $tree->{meta}->{date};
+$tree = $tree->{data};
+my %prices;
+for my $uuid (keys %$tree) {
+    $prices{$uuid}{normal} = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{normal}->{$date};
+    $prices{$uuid}{foil}   = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{foil}->{$date};
+}
+
+print "downloading card data...\n";
+$tree = download_and_parse($printings_url)->{data};
 for my $set_code (keys %$tree) {
     my $set_name = $tree->{$set_code}->{name};
     my $set_release = $tree->{$set_code}->{releaseDate};
@@ -342,6 +357,17 @@ for my $set_code (keys %$tree) {
                 join(", ", grep { $_ ne $name } @{$card->{names}}) . "." if @{$card->{names}};
             }
         }
+        if($set_name !~ /^World Championship Decks .*$/ && $set_name !~ /^.*Collectors' Edition$/) {
+            $cards{$name}{price} = min($cards{$name}{price}, $prices{$card->{uuid}}{normal}, $prices{$card->{uuid}}{foil});
+        }
+        if($name eq "Worldly Tutor") {
+            printf "%-20s %-20s %5.2f %5.2f %5.2f\n",
+            $name,
+            $set_name,
+            $cards{$name}{price} // "-",
+            $prices{$card->{uuid}}{normal} // "-",
+            $prices{$card->{uuid}}{foil} // "-";
+        }
         unless($tree->{$set_code}->{isOnlineOnly}) {
             my $set = $set_name;
             $set = $set_trans{$set} if $set_trans{$set};
@@ -357,21 +383,11 @@ for my $set_code (keys %$tree) {
     }
 }
 
-print "downloading price data...\n";
-$tree = download_and_parse($prices_url);
-my $date = $tree->{meta}->{date};
-$tree = $tree->{data};
-my %prices;
-for my $uuid (keys %$tree) {
-    $prices{$uuid}{normal} = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{normal}->{$date};
-    $prices{$uuid}{foil}   = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{foil}->{$date};
-}
-
 print "inserting cards...\n";
 my $dbh = get_db_handle();
 my %card_names = map { $_ => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
-my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)");
-my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ?, stale = 0 WHERE name = ?");
+my $insert = $dbh->prepare("INSERT INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, price, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
+my $update = $dbh->prepare("UPDATE cards SET name = ?, cmc = ?, color = ?, type = ?, date = ?, full_text = ?, art_name = ?, price_name = ?, price = ?, stale = 0 WHERE name = ?");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE cards SET stale = 1");
 my $i = 0;
@@ -409,9 +425,9 @@ for(sort keys %cards) {
     $fulltext .= "Timeshifted: True\n" if defined $card{timeshifted};
 
     if($card_names{$_}) {
-        $update->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $_);
+        $update->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price}, $_);
     } else {
-        $insert->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name});
+        $insert->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price});
     }
     #printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;
 }
@@ -424,35 +440,6 @@ $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
 $sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $prices{$_->[4]}{normal}, $prices{$_->[4]}{foil}) for @by_set;
 $dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND mid = ?", {}, $_->[0], $_->[2], $_->[3]) for @by_set;
-$dbh->do("COMMIT");
-
-print "updating price data...\n";
-my %min;
-for(@{$dbh->selectall_arrayref("SELECT price_name, set_name, price, fprice FROM printings")}) {
-    my ($name, $set, $normal, $foil) = @{$_};
-    # skip these non-tournament legal sets so they dont a false low price
-    next if $set =~ /^World Championship Decks .*$/;
-    next if $set =~ /^.*Collectors' Edition$/;
-    if(defined $normal) {
-        if(!defined $min{$name} || $normal < $min{$name}) {
-            $min{$name} = $normal;
-        }
-    }
-    if(defined $foil) {
-        if(!defined $min{$name} || $foil < $min{$name}) {
-            $min{$name} = $foil;
-        }
-    }
-}
-$sth = $dbh->prepare("UPDATE cards SET price = ? WHERE price_name = ?");
-$dbh->do("BEGIN TRANSACTION");
-$i = 0;
-$total = keys %min;
-for(keys %min) {
-    $sth->execute($min{$_}, $_);
-    printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;
-}
-print "\n";
 $dbh->do("COMMIT");
 
 (my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");
