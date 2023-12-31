@@ -13,7 +13,6 @@ make the search bar change colors when focused
 alternate background colors when displaying search results
 make the sort field default to something like 'sort by'
 confirm that magic online only printings arent showing up
-make double face cards show up properly, only one face seems searchable
 add the ability to search for specific printings not just all printings of a card
 make the alchemy cards not show up
 some cards have blank legality, seem to be all world champion decks (abduction, academy rector)
@@ -82,3 +81,4 @@ force of will price wrong due to world champ decks
 fix all the promo set names so the prices show up
 speed up price data insertion, maybe re-order things and have it inserted along with the card data
 add a second name field for cards with non-ascii characters
+make double face cards show up properly, only one face seems searchable

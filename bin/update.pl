@@ -289,13 +289,65 @@ for my $set_code (keys %$tree) {
     for my $card (@{$tree->{$set_code}->{cards}}) {
         next if $card->{layout} eq "token";
         my $name = $card->{name};
+        if(defined $card->{otherFaceIds}) {
+            my $fullname = $name;
+            $name = $card->{faceName};
+            my @names = split " // ", $fullname;
+            if($card->{layout} eq "split" || $card->{layout} eq "aftermath") {
+                push @{$cards{$name}{extras}}, "This is half of the split card $fullname.";
+                $cards{$name}{art_name} = $cards{$name}{price_name} = $fullname;
+            } elsif($card->{layout} eq "transform") {
+                if($card->{side} eq "a") {
+                    push @{$cards{$name}{extras}}, "Front face. Transforms into $names[1].";
+                } else {
+                    push @{$cards{$name}{extras}}, "Back face. Transforms from $names[0].";
+                    $cards{$name}{price_name} = $names[0];
+                }
+            } elsif($card->{layout} eq "flip") {
+                if($card->{side} eq "a") {
+                    push @{$cards{$name}{extras}}, "Flips into $names[1].";
+                } else {
+                    push @{$cards{$name}{extras}}, "Flips from $names[0].";
+                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                }
+            } elsif($card->{layout} eq "meld") {
+                if(defined $card->{cardParts}) { # Bruna, the Fading Light // Brisela, Voice of Nightmares is missing this
+                    @names = @{$card->{cardParts}};
+                    if($card->{side} eq "a") {
+                        my $other = ($names[0] eq $name) ? $names[1] : $names[0];
+                        push @{$cards{$name}{extras}}, "Melds with $other into $names[2].";
+                    } else {
+                        push @{$cards{$name}{extras}}, "Melds from $names[0] and $names[1].";
+                    }
+                }
+            } elsif($card->{layout} eq "adventure") {
+                if($card->{side} eq "a") {
+                    push @{$cards{$name}{extras}}, "Related to $names[1].";
+                } else {
+                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                    push @{$cards{$name}{extras}}, "Related to $names[0].";
+                }
+            } elsif($card->{layout} eq "modal_dfc") {
+                if($card->{side} eq "a") {
+                    push @{$cards{$name}{extras}}, "Front face. Related to $names[1].";
+                } else {
+                    $cards{$name}{price_name} = $names[0];
+                    push @{$cards{$name}{extras}}, "Back face. Related to $names[0].";
+                }
+            } elsif($card->{layout} eq "reversible_card") {
+                # do nothing
+            } else {
+                push @{$cards{$name}{extras}}, "Related to " .
+                join(", ", grep { $_ ne $name } @names) . "." if @names > 1;
+            }
+        }
         $cards{$name}{name} = $name;
         $cards{$name}{simple_name} = $name;
         while(my ($key, $value) = each %char_trans) {
             $cards{$name}{simple_name} =~ s/$key/$value/g;
         }
-        $cards{$name}{art_name} = $name;
-        $cards{$name}{price_name} = $name;
+        $cards{$name}{art_name} //= $name;
+        $cards{$name}{price_name} //= $name;
         $cards{$name}{cost} = $card->{manaCost};
         $cards{$name}{type_line} = $card->{type};
         $cards{$name}{simple_type} = join " ", @{$card->{types}};
@@ -309,7 +361,6 @@ for my $set_code (keys %$tree) {
         $cards{$name}{color} = color_array_to_sorted_string($card->{colors}) if defined $card->{colors};
         $cards{$name}{color_sort} = color_sort_order($card);
         $cards{$name}{loyal} = $card->{loyalty};
-        $cards{$name}{extras} = undef;
         $cards{$name}{legal} = join ", ", map { $card->{legalities}->{$_} . " in " . $_ } keys %{$card->{legalities}};
         $cards{$name}{reserved} = 1 if defined $card->{isReserved};
         $cards{$name}{timeshifted} = 1 if defined $card->{isTimeshifted};
@@ -322,37 +373,6 @@ for my $set_code (keys %$tree) {
             $hand = "+$hand" if $hand >= 0;
             $life = "+$life" if $life >= 0;
             $cards{$name}{text} = "$hand cards / $life life\n" . $cards{$name}{text};
-        }
-        if(defined $card->{names}) { # this should be changed to $card->{otherFaceIds}
-            if($card->{layout} eq "split" || $card->{layout} eq "aftermath") {
-                push @{$cards{$name}{extras}}, "This is half of the split card " . join(" // ", @{$card->{names}}) . ".";
-                $cards{$name}{art_name} = $cards{$name}{price_name} = join(" // ", @{$card->{names}});
-            } elsif($card->{layout} eq "transform") {
-                if($card->{names}->[0] eq $name) {
-                    push @{$cards{$name}{extras}}, "Front face. Transforms into " . $card->{names}->[1] . ".";
-                } else {
-                    push @{$cards{$name}{extras}}, "Back face. Transforms into " . $card->{names}->[0] . ".";
-                    $cards{$name}{price_name} = $card->{names}->[0];
-                }
-            } elsif($card->{layout} eq "flip") {
-                if($card->{names}->[0] eq $name) {
-                    push @{$cards{$name}{extras}}, "Flips into " . $card->{names}->[1] . ".";
-                } else {
-                    push @{$cards{$name}{extras}}, "Flips from " . $card->{names}->[0] . ".";
-                    $cards{$name}{art_name} = $cards{$name}{price_name} = $card->{names}->[0];
-                }
-            } elsif($card->{layout} eq "meld") {
-                if($card->{names}->[0] eq $name) {
-                    push @{$cards{$name}{extras}}, "Melds with " . $card->{names}->[1] . " into " . $card->{names}->[2] . ".";
-                } elsif($card->{names}->[1] eq $name) {
-                    push @{$cards{$name}{extras}}, "Melds with " . $card->{names}->[0] . " into " . $card->{names}->[2] . ".";
-                } else {
-                    push @{$cards{$name}{extras}}, "Melds from " . $card->{names}->[0] . " and " . $card->{names}->[1] . ".";
-                }
-            } else {
-                push @{$cards{$name}{extras}}, "Related to " .
-                join(", ", grep { $_ ne $name } @{$card->{names}}) . "." if @{$card->{names}};
-            }
         }
         if($set_name !~ /^World Championship Decks .*$/ && $set_name !~ /^.*Collectors' Edition$/) {
             $cards{$name}{price} = min($cards{$name}{price}, $prices{$card->{uuid}}{normal}, $prices{$card->{uuid}}{foil});
@@ -383,6 +403,7 @@ for(sort keys %cards) {
     my %card = %{$cards{$_}};
     $card{text} //= "";
     if($card{extras}) {
+        $card{extras} = [ uniq(@{$card{extras}}) ];
         $card{text} .= "\n" if $card{text};
         $card{text} .= "[" . join(" ", @{$card{extras}}) . "]";
     }
