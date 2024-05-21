@@ -15,7 +15,6 @@ make the sort field default to something like 'sort by'
 confirm that magic online only printings arent showing up
 add the ability to search for specific printings not just all printings of a card
 make the alchemy cards not show up
-some cards have blank legality, seem to be all world champion decks (abduction, academy rector)
 30th Anniversary Edition throwing off prices
 change the dot to a dash in modal cards
 
@@ -84,3 +83,4 @@ fix all the promo set names so the prices show up
 speed up price data insertion, maybe re-order things and have it inserted along with the card data
 add a second name field for cards with non-ascii characters
 make double face cards show up properly, only one face seems searchable
+some cards have blank legality, seem to be all world champion decks (abduction, academy rector)

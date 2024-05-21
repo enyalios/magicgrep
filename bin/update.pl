@@ -361,7 +361,10 @@ for my $set_code (keys %$tree) {
         $cards{$name}{color} = color_array_to_sorted_string($card->{colors}) if defined $card->{colors};
         $cards{$name}{color_sort} = color_sort_order($card);
         $cards{$name}{loyal} = $card->{loyalty};
-        $cards{$name}{legal} = join ", ", map { $card->{legalities}->{$_} . " in " . $_ } keys %{$card->{legalities}};
+        $cards{$name}{legal} //= "";
+        if(%{$card->{legalities}}) {
+            $cards{$name}{legal} = join ", ", map { $card->{legalities}->{$_} . " in " . $_ } keys %{$card->{legalities}};
+        }
         $cards{$name}{reserved} = 1 if defined $card->{isReserved};
         $cards{$name}{timeshifted} = 1 if defined $card->{isTimeshifted};
         if(defined $card->{colors} && @{$card->{colors}} && $card->{layout} ne "flip" && (color_array_to_sorted_string($card->{colors}) ne cost_to_colors($card->{manaCost}))) {
