@@ -377,7 +377,7 @@ for my $set_code (keys %$tree) {
             $life = "+$life" if $life >= 0;
             $cards{$name}{text} = "$hand cards / $life life\n" . $cards{$name}{text};
         }
-        if($set_name !~ /^World Championship Decks .*$/ && $set_name !~ /^.*Collectors' Edition$/) {
+        unless($set_name =~ /^(World Championship Decks .*|.*Collectors' Edition|30th Anniversary Edition)$/) {
             $cards{$name}{price} = min($cards{$name}{price}, $prices{$card->{uuid}}{normal}, $prices{$card->{uuid}}{foil});
         }
         unless($tree->{$set_code}->{isOnlineOnly}) {
