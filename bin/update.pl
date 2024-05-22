@@ -411,6 +411,7 @@ for(sort keys %cards) {
         $card{text} .= "[" . join(" ", @{$card{extras}}) . "]";
     }
     $card{text} =~ s/\n/\n             /g;
+    $card{text} =~ s/•/-/g;
     $card{text} =~ s/—/--/g;
     $card{type_line} =~ s/—/--/g;
     $card{cost} //= "";
