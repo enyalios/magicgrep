@@ -84,3 +84,4 @@ make double face cards show up properly, only one face seems searchable
 some cards have blank legality, seem to be all world champion decks (abduction, academy rector)
 30th Anniversary Edition throwing off prices
 change the dot to a dash in modal cards
+30th anniversary throwing off the low price field in card.cgi
