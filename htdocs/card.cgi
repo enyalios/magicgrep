@@ -11,6 +11,7 @@ use HTML::Entities;
 use URI::Escape;
 
 my $card = param("card") // "";
+my $star = "★";
 
 my $dbh = get_db_handle();
 my $card_ref = $dbh->selectrow_arrayref("SELECT full_text, name, price_name FROM cards WHERE name LIKE ?", {}, $card);
@@ -30,9 +31,9 @@ my $lowest_price = my $lowest_fprice = 0;
 while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings_sth->fetchrow_array) {
     my $price_string = "";
     if($price != 0 && $fprice != 0) {
-        $price_string = sprintf "\$%.2f / \$%.2ff", $price, $fprice;
+        $price_string = sprintf "\$%.2f / \$%.2f$star", $price, $fprice;
     } elsif($fprice != 0) {
-        $price_string = sprintf "\$%.2ff", $fprice;
+        $price_string = sprintf "\$%.2f$star", $fprice;
     } elsif($price != 0) {
         $price_string = sprintf "\$%.2f", $price;
     } else {
