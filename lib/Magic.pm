@@ -39,7 +39,7 @@ sub get_fields {
 sub tilde_expand {
     for(@_) {
         if(index($_, "~") != -1) {
-            s/~/(\\1|\\2)/g;
+            s/~/(\\1|\\2|this \\w+)/g;
             my $negate = s/^!//;
             $_ = "^Name: *+(([^,\\n]*+).*)\$[\\s\\S]*" . $_;
             $_ = "!$_" if $negate;
