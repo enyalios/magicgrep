@@ -40,7 +40,7 @@ Content-Type: text/html
             This can be used to search for cards with specific names, card types, rarity, cost, etc...
             <br /><br />
             In expressions, ~ is expanded to the name of the card.
-            To find legendary dragons with ETB triggers, try <a class="code" href="index.cgi?q=^type.*legendary.*dragon 'when ~ enters the battlefield'">^type.*legendary.*dragon 'when ~ enters the battlefield'</a>.
+            To find legendary dragons with ETB triggers, try <a class="code" href="index.cgi?q=^type.*legendary.*dragon 'when ~ enters'">^type.*legendary.*dragon 'when ~ enters'</a>.
             <br /><br />
             Due to technical reasons, you can't match against the price field, but there are some hidden fields that you can match against.
             'CMC' has a card's converted mana cost, 'Color' is the cards color, 'CID' is its color identity (used for the <a href="http://mtgcommander.net">commander format</a>), 'Legality' is its status in each format, 'Reserved' is its reserved list status, and 'Timeshifted' is if the card has ever been printed in a timeshifted frame.
