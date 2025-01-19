@@ -41,6 +41,13 @@ Content-type: text/html
     <head>
         <title>Bulk Import</title>
         <link rel="stylesheet" type="text/css" href="mystyle.css">
+        <script>
+            function trim() {
+                var string = document.getElementById("deck").value;
+                var output = string.split('\\n').map(s => s.substr(1)).join('\\n');
+                document.getElementById("deck").value = output;
+            }
+        </script>
     </head>
     <body>
         $header
@@ -48,10 +55,11 @@ Content-type: text/html
             <form method="GET">
                 Copy and paste a decklist below to view it.
                 <br />
-                <textarea name="deck" rows="36" cols="80"></textarea>
+                <textarea name="deck" id="deck" rows="36" cols="80"></textarea>
                 <br />
                 <input type="submit" value="View Deck!" name="index">
                 <input type="submit" value="View Stats!" name="stats">
+                <input type="button" onclick="trim()" value="Trim Text">
             </form>
         </div>
     </body>
