@@ -12,6 +12,9 @@ use Magic;
 my $deck = param("deck") // "";
 if(length $deck) {
     # do work
+    my $dbh = get_db_handle();
+    my %name_list = map { lc($_) => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
+
     my @cards = split /\r?\n/, $deck;
     for(@cards) {
         s/#.*//; # remove comments
@@ -19,13 +22,23 @@ if(length $deck) {
         s/\*CMDR\*//; # remove the string *CMDR* which marks commanders
         s/^\s+//; # remove leading whitespace
         s/\s+$//; # remove trailing whitespace 
-        s/ \/\/ /|/; # fix split card names
+        if(/^(.*) \/\/ (.*)$/) { # fix split card names
+            $_ = $1;
+            push @cards, $2;
+        }
+    }
+    @cards = grep { !/^$/ } @cards; # skip blank lines
+    my @bad_names = grep { ! $name_list{lc($_)} } @cards;
+    if(@bad_names) {
+        print "Content-Type: text/html\n\n";
+        print "Could not find the following cards:<br />\n<br />\n";
+        print "$_<br />\n" for @bad_names;
+        exit;
+    }
+    for(@cards) {
         s/"/./g; # "escape" double quotes
         $_ = uri_escape($_);
     }
-    @cards = grep { !/^$/ } @cards; # skip blank lines
-    #print "Content-type: text/html\n\n";
-    #print "&lt;$_&gt;<br />\n" for @cards;
 
     print "Status: 307\n";
     my $url = "index.cgi";
