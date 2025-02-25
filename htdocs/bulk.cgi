@@ -4,8 +4,9 @@ use strict;
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
 use CGI 'param';
-use URI::Escape;
 use HTML::Entities;
+use Text::Unidecode;
+use URI::Escape;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
@@ -14,7 +15,14 @@ my $deck = param("deck") // "";
 if(length $deck) {
     # do work
     my $dbh = get_db_handle();
-    my %name_list = map { lc($_) => 1 } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
+    # get a list of all card names, convert them to unicode, lowercase them,
+    # then use those strings, as well as those strings with all special
+    # characters converted to ascii, as hash keys
+    my %name_list = map {
+        utf8::decode($_);
+        $_ = lc($_);
+        $_ => 1, unidecode($_) => 1
+    } @{$dbh->selectcol_arrayref("SELECT name FROM cards")};
 
     my @cards = split /\r?\n/, $deck;
     for(@cards) {
@@ -29,9 +37,8 @@ if(length $deck) {
         }
     }
     @cards = grep { !/^$/ } @cards; # skip blank lines
-    utf8::encode($_) for @cards;
     my @bad_names = grep { ! $name_list{lc($_)} } @cards;
-    @bad_names = map { utf8::decode($_); encode_entities($_) } @bad_names;
+    @bad_names = map { encode_entities($_) } @bad_names;
     if(@bad_names) {
         print "Content-Type: text/html\n\n";
         print "Could not find the following cards:<br />\n<br />\n";
@@ -39,6 +46,7 @@ if(length $deck) {
         exit;
     }
     for(@cards) {
+        utf8::encode($_);
         s/"/./g; # "escape" double quotes
         $_ = uri_escape($_);
     }
