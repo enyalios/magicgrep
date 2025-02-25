@@ -5,6 +5,7 @@ use warnings;
 use CGI::Carp 'fatalsToBrowser';
 use CGI 'param';
 use URI::Escape;
+use HTML::Entities;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
@@ -28,7 +29,9 @@ if(length $deck) {
         }
     }
     @cards = grep { !/^$/ } @cards; # skip blank lines
+    utf8::encode($_) for @cards;
     my @bad_names = grep { ! $name_list{lc($_)} } @cards;
+    @bad_names = map { utf8::decode($_); encode_entities($_) } @bad_names;
     if(@bad_names) {
         print "Content-Type: text/html\n\n";
         print "Could not find the following cards:<br />\n<br />\n";
