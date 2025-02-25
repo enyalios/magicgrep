@@ -4,9 +4,10 @@
 
 use strict;
 use warnings;
-use LWP::UserAgent;
 use JSON;
 #use List::Util 'any'; # needs version 1.33
+use LWP::UserAgent;
+use Text::Unidecode;
 use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
@@ -95,23 +96,6 @@ my %set_trans = (
     "March of the Machine Commander" => "Commander: March of the Machine",
     "The Lord of the Rings: Tales of Middle-earth" => "Universes Beyond: The Lord of the Rings: Tales of Middle-earth",
     "Tales of Middle-earth Commander" => "Commander: The Lord of the Rings: Tales of Middle-earth",
-);
-
-my %char_trans = (
-    "à" => "a",
-    "á" => "a",
-    "â" => "a",
-    "ä" => "a",
-    "í" => "i",
-    "ó" => "o",
-    "ö" => "o",
-    "û" => "u",
-    "ü" => "u",
-    "ú" => "u",
-    "é" => "e",
-    "É" => "E",
-    "ñ" => "n",
-    "®" => "(R)",
 );
 
 sub uniq {
@@ -342,10 +326,7 @@ for my $set_code (keys %$tree) {
             }
         }
         $cards{$name}{name} = $name;
-        $cards{$name}{simple_name} = $name;
-        while(my ($key, $value) = each %char_trans) {
-            $cards{$name}{simple_name} =~ s/$key/$value/g;
-        }
+        $cards{$name}{simple_name} = unidecode($name);
         $cards{$name}{art_name} //= $name;
         $cards{$name}{price_name} //= $name;
         $cards{$name}{cost} = $card->{manaCost};
