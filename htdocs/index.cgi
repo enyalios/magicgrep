@@ -41,7 +41,8 @@ sub safe_backticks {
 
 my $q = param("q") // "";
 my $sort = param("sort") // "name";
-my $compact = param("compact") // 0;
+my $output = param("output") // "normal";
+my $compact_checkbox_status = ($output eq "compact")?" checked":"";
 my $js_safe_q = js_safe($q);
 my $html_safe_q = html_safe($q);
 my $content = "";
@@ -86,7 +87,7 @@ Content-Type: text/html
                 }
                 var compact = "";
                 if(document.getElementById("compact").checked) {
-                    compact = "compact=1&";
+                    compact = "output=compact&";
                 }
                 var query_string = "?" + sort + compact + "q=" + q
                 if(last_search == query_string) return;
@@ -174,7 +175,7 @@ Content-Type: text/html
                         [ <a href="help.cgi" class="orange">Help</a> ]
                         [ $login ]
                     </div>
-                    <input type="checkbox" id="compact" onchange="update()">
+                    <input type="checkbox" id="compact" onchange="update()"$compact_checkbox_status>
                     <select name="sort" onchange="update();this.blur()" id="sort">
                         $sort_string
                     </select>

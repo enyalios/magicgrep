@@ -14,15 +14,16 @@ my $string = param("q") // "";
 my $escaped_query = uri_escape($string);
 my $page = param("page") // 1;
 my $sort = param("sort") // "name";
-my $compact = param("compact") // "0";
-$cards_per_page = 60 if $compact;
+my $output = param("output") // "normal";
+$output = "normal" unless $output =~ /^(compact|text)$/;
+$cards_per_page = 60 if $output eq "compact";
 my $card_start = ($page - 1) * $cards_per_page + 1;
 my $epoch = time;
 my $one_week = 7 * 24 * 60 * 60;
 
 print "Content-Type: text/html\n\n" if $ENV{SCRIPT_NAME} =~ /search\.cgi$/;
 my $content;
-$content .= "<table>\n" unless $compact;
+$content .= "<table>\n" unless $output eq "compact";
 
 my @queries = get_fields($string);
 tilde_expand(@queries);
@@ -58,7 +59,7 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     1 while $full_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
     chomp $full_text;
     my $image_handler = image_handler();
-    if($compact) {
+    if($output eq "compact") {
         $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a><br/>$price ";
     } else {
         $content .= "<tr><td><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a></td>";
@@ -68,22 +69,22 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
     $content .= "<a class='link' href='https://edhrec.com/route?cc=$escaped_name'>EDH</a>";
     $content .= "<a class='link' href='http://shop.tcgplayer.com/magic/product/show?ProductName=$price_name&IsProductNameExact=true'>TCG</a>";
     $content .= "<a class='link' href='http://enyalios.net/cgi-bin/mtgstocks.cgi?q=$price_name'>MS</a>";
-    if($compact) {
+    if($output eq "compact") {
         $content .= "</div>\n";
     } else {
         $content .= "</td></tr>\n";
     }
 }
-$content .= "</table>\n" unless $compact;
+$content .= "</table>\n" unless $output eq "compact";
 
 $dbh->disconnect;
 
 # print out a count at the end
 $sort = ($sort eq "name") ? "" : "&sort=$sort";
-$compact = ($compact == 0) ? "" : "&compact=$compact";
-my $prev = sprintf "<a href='?page=%d%s%s&q=%s'>&lt; prev</a> ", $page - 1, $sort, $compact, $escaped_query;
+$output = ($output eq "normal") ? "" : "&output=$output";
+my $prev = sprintf "<a href='?page=%d%s%s&q=%s'>&lt; prev</a> ", $page - 1, $sort, $output, $escaped_query;
 $prev = "" if $page == 1;
-my $next = sprintf " <a href='?page=%d%s%s&q=%s'>next &gt;</a>", $page + 1, $sort, $compact, $escaped_query;
+my $next = sprintf " <a href='?page=%d%s%s&q=%s'>next &gt;</a>", $page + 1, $sort, $output, $escaped_query;
 $next = "" if $card_start + $shown_cards - 1 == $num_cards;
 my $showing = sprintf "%d - %d of ", $card_start, $card_start + $shown_cards - 1;
 $showing = "" if $shown_cards == $num_cards;
