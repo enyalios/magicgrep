@@ -15,6 +15,7 @@ make the sort field default to something like 'sort by'
 confirm that magic online only printings arent showing up
 add the ability to search for specific printings not just all printings of a card
 make the alchemy cards not show up
+make the ui work better on mobile
 
 # completed
 make the url update as you search
