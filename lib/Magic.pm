@@ -107,7 +107,12 @@ sub get_username {
 }
 
 sub image_handler {
-    return "https://gatherer.wizards.com/Handlers/Image.ashx";
+    my $card = $_[0];
+    if($card =~ /^\d+$/) {
+        return "https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=$card&type=card";
+    } else {
+        return "https://gatherer.wizards.com/Handlers/Image.ashx?name=$card&type=card&.jpg";
+    }
 }
 
 1;

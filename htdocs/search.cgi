@@ -62,13 +62,13 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
         1 while $full_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
     }
     chomp $full_text;
-    my $image_handler = image_handler();
+    my $image_handler = image_handler($art_name);
     if($output eq "compact") {
-        $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a><br/>$price ";
+        $content .= "<div class='cardpane'><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler'></a><br/>$price ";
     } elsif($output eq "text") {
         $content .= "$full_text\nPrice:       $price\nDate:        $date\n\n";
     } else {
-        $content .= "<tr><td><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler?name=$art_name&type=card&.jpg'></a></td>";
+        $content .= "<tr><td><a href='card.cgi?card=$escaped_name'><img class='cardimage' src='$image_handler'></a></td>";
         $content .= "<td><div class='text'>$full_text\n";
         $content .= "Price:       $price</div>\n";
     }
