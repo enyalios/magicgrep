@@ -9,7 +9,12 @@ html,body {
 .cardimage {
     width: 200px;
     padding: 0px 2px;
+    border-radius: 10px;
     }
+.cardimage2 {
+    height: 310px;
+    border-radius: 10px;
+}
 .text {
     //width: 800px;
     white-space: pre;

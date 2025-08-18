@@ -52,7 +52,7 @@ while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings
         }
     }
 
-    $card_list .= sprintf "<div class=\"cardpane2\"><img height=\"310px\" src=\"%s\"><br />\n", image_handler($mid);
+    $card_list .= sprintf "<div class=\"cardpane2\"><img class=\"cardimage2\" src=\"%s\"><br />\n", image_handler($mid);
     $card_list .= sprintf "<span class=\"cardpane_price\">(%s)</span><span class=\"cardpane_set\" title=\"%s\">%s</span></div>\n", $price_string, $set_name, $set_name;
 }
 
