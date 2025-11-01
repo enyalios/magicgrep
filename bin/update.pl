@@ -348,6 +348,7 @@ for my $set_code (keys %$tree) {
         }
         $cards{$name}{reserved} = 1 if defined $card->{isReserved};
         $cards{$name}{timeshifted} = 1 if defined $card->{isTimeshifted};
+        $cards{$name}{gamechanger} = 1 if defined $card->{isGameChanger};
         if(defined $card->{colors} && @{$card->{colors}} && $card->{layout} ne "flip" && (color_array_to_sorted_string($card->{colors}) ne cost_to_colors($card->{manaCost}))) {
             push @{$cards{$name}{extras}}, join("/", @{$card->{colors}}) . " color indicator.";
         }
@@ -419,6 +420,7 @@ for(sort keys %cards) {
     $fulltext .= "Legality:    $card{legal}\n";
     $fulltext .= "Reserved:    True\n" if defined $card{reserved};
     $fulltext .= "Timeshifted: True\n" if defined $card{timeshifted};
+    $fulltext .= "Gamechanger: True\n" if defined $card{gamechanger};
 
     $sth->execute($card{name}, $card{cmc}, $card{color_sort}, $card{simple_type}, $date, $fulltext, $card{art_name}, $card{price_name}, $card{price});
     #printf "\r%d/%d %.1f%% ", ++$i, $total, $i/$total*100;

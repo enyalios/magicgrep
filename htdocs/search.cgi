@@ -56,7 +56,7 @@ while((my $full_text, my $name, my $art_name, my $price_name, my $price, my $pri
         $price = "???"
     }
     if($output eq "normal") {
-        $full_text =~ s/^(CMC|Color|CID|Legality|Reserved|Timeshifted): .*\n//mg; # dont show some fields
+        $full_text =~ s/^(CMC|Color|CID|Legality|Reserved|Timeshifted|Gamechanger): .*\n//mg; # dont show some fields
         $full_text =~ s/^(Name: .*\n)Name: .*\n/$1/mg; # only show the first name field
         # this craziness wraps the lines to 80 columns
         1 while $full_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
