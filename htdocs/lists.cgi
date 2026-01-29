@@ -25,6 +25,7 @@ while(<$fh>) {
     }
 }
 $staples{"Dual Lands"} = "";
+$staples{"Set Rares"} = "";
 
 print <<EOF;
 Content-Type: text/html
@@ -42,6 +43,10 @@ EOF
 for(sort keys %staples) {
     if($_ eq "Dual Lands") {
         print "<li><a href='lands.html'>Dual Lands</a><br /></li>\n";
+        next;
+    }
+    if($_ eq "Set Rares") {
+        print "<li><a href='sets.html'>Set Rares</a><br /></li>\n";
         next;
     }
     my $link = join "|", map { uri_escape($_) } sort @{$staples{$_}};
