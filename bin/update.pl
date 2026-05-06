@@ -311,6 +311,14 @@ for my $set_code (keys %$tree) {
                     $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
                     push @{$cards{$name}{extras}}, "Related to $names[0].";
                 }
+            } elsif($card->{layout} eq "prepare") {
+                if($card->{side} eq "a") {
+                    push @{$cards{$name}{extras}}, "Related to $names[1].";
+                } else {
+                    $name .= ' (Prepare)';
+                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                    push @{$cards{$name}{extras}}, "Related to $names[0].";
+                }
             } elsif($card->{layout} eq "modal_dfc") {
                 if($card->{side} eq "a") {
                     push @{$cards{$name}{extras}}, "Front face. Related to $names[1].";
