@@ -22,7 +22,7 @@ my $price_name = uri_escape $card_ref->[2];
 # this craziness wraps the lines to 80 columns
 1 while $card_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
 
-my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, sid, price, fprice FROM printings WHERE card_name = ? ORDER BY mid");
+my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, sid, price, fprice FROM printings WHERE card_name = ? ORDER BY date");
 $printings_sth->execute($card);
 my $html_safe_name = encode_entities($card, '\'<>&"');
 

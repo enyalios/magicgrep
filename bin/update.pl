@@ -382,7 +382,7 @@ for my $set_code (keys %$tree) {
             my $sid = $card->{identifiers}->{scryfallId};
             $sid = 0 unless defined $sid;
             my $jsonid = $card->{uuid};
-            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $sid, $jsonid ];
+            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $sid, $jsonid, $set_release ];
         }
     }
 }
@@ -439,10 +439,10 @@ for(sort keys %cards) {
 $dbh->do("COMMIT");
 
 print "inserting sets...\n";
-$sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, sid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+$sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, sid, jsonid, date, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
-$sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $_->[5], $prices{$_->[5]}{normal}, $prices{$_->[5]}{foil}) for @by_set;
+$sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $_->[5], $_->[6], $prices{$_->[5]}{normal}, $prices{$_->[5]}{foil}) for @by_set;
 $dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND jsonid = ?", {}, $_->[0], $_->[2], $_->[5]) for @by_set;
 $dbh->do("COMMIT");
 
