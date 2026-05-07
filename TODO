@@ -6,7 +6,6 @@ make it so card.cgi can show a single printing of a card
 make stats.cgi prompt for a query when one isnt given
 stop oversized cards from overlapping in card.cgi
 fix the sets listed for oversized cards on card.cgi
-figure out why the search field doesnt match the url sometimes when you use the back button
 saving decklists/collections
 make the cookie timeout refresh with every page view
 make the search bar change colors when focused
@@ -89,3 +88,5 @@ change the dot to a dash in modal cards
 the bulk page now checks for cards that dont match any existing card names
 added the ability to return search results as only text
 added the field gamechanger
+figure out why the search field doesnt match the url sometimes when you use the back button
+use scryfall ids for images in card.cgi
