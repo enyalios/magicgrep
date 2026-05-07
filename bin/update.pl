@@ -279,7 +279,7 @@ for my $set_code (keys %$tree) {
             my @names = split " // ", $fullname;
             if($card->{layout} eq "split" || $card->{layout} eq "aftermath") {
                 push @{$cards{$name}{extras}}, "This is half of the split card $fullname.";
-                $cards{$name}{art_name} = $cards{$name}{price_name} = $fullname;
+                $cards{$name}{price_name} = $fullname;
             } elsif($card->{layout} eq "transform") {
                 if($card->{side} eq "a") {
                     push @{$cards{$name}{extras}}, "Front face. Transforms into $names[1].";
@@ -292,7 +292,7 @@ for my $set_code (keys %$tree) {
                     push @{$cards{$name}{extras}}, "Flips into $names[1].";
                 } else {
                     push @{$cards{$name}{extras}}, "Flips from $names[0].";
-                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                    $cards{$name}{price_name} = $names[0];
                 }
             } elsif($card->{layout} eq "meld") {
                 if(defined $card->{cardParts}) { # Bruna, the Fading Light // Brisela, Voice of Nightmares is missing this
@@ -308,7 +308,7 @@ for my $set_code (keys %$tree) {
                 if($card->{side} eq "a") {
                     push @{$cards{$name}{extras}}, "Related to $names[1].";
                 } else {
-                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                    $cards{$name}{price_name} = $names[0];
                     push @{$cards{$name}{extras}}, "Related to $names[0].";
                 }
             } elsif($card->{layout} eq "prepare") {
@@ -316,7 +316,7 @@ for my $set_code (keys %$tree) {
                     push @{$cards{$name}{extras}}, "Related to $names[1].";
                 } else {
                     $name .= ' (Prepare)';
-                    $cards{$name}{art_name} = $cards{$name}{price_name} = $names[0];
+                    $cards{$name}{price_name} = $names[0];
                     push @{$cards{$name}{extras}}, "Related to $names[0].";
                 }
             } elsif($card->{layout} eq "modal_dfc") {
@@ -335,7 +335,7 @@ for my $set_code (keys %$tree) {
         }
         $cards{$name}{name} = $name;
         $cards{$name}{simple_name} = unidecode($name);
-        $cards{$name}{art_name} //= $name;
+        $cards{$name}{art_name} = $card->{identifiers}->{scryfallId} // 0;
         $cards{$name}{price_name} //= $name;
         $cards{$name}{cost} = $card->{manaCost};
         $cards{$name}{type_line} = $card->{type};
@@ -379,8 +379,10 @@ for my $set_code (keys %$tree) {
             }
             my $mid = $card->{identifiers}->{multiverseId};
             $mid = 0 unless defined $mid;
+            my $sid = $card->{identifiers}->{scryfallId};
+            $sid = 0 unless defined $sid;
             my $jsonid = $card->{uuid};
-            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $jsonid ];
+            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $sid, $jsonid ];
         }
     }
 }
@@ -437,11 +439,11 @@ for(sort keys %cards) {
 $dbh->do("COMMIT");
 
 print "inserting sets...\n";
-$sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?)");
+$sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, sid, jsonid, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
-$sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $prices{$_->[4]}{normal}, $prices{$_->[4]}{foil}) for @by_set;
-$dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND mid = ?", {}, $_->[0], $_->[2], $_->[3]) for @by_set;
+$sth->execute($_->[0], $_->[1], $_->[2], $_->[3], $_->[4], $_->[5], $prices{$_->[5]}{normal}, $prices{$_->[5]}{foil}) for @by_set;
+$dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AND jsonid = ?", {}, $_->[0], $_->[2], $_->[5]) for @by_set;
 $dbh->do("COMMIT");
 
 (my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");

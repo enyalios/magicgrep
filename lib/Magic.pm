@@ -108,15 +108,8 @@ sub get_username {
 
 sub image_handler {
     my $card = $_[0];
-    if($card eq "0") {
-        return "card_back.webp";
-    }elsif($card =~ /^\d+$/) {
-        return "https://api.scryfall.com/cards/multiverse/$card?format=image&version=normal";
-        #return "https://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=$card&type=card";
-    } else {
-        return "https://api.scryfall.com/cards/named?exact=$card&format=image&version=normal";
-        #return "https://gatherer.wizards.com/Handlers/Image.ashx?name=$card&type=card&.jpg";
-    }
+    return "card_back.webp" if $card eq "0";
+    return sprintf "https://cards.scryfall.io/normal/front/%s/%s/%s.jpg", substr($card,0,1), substr($card,1,1), $card;
 }
 
 1;

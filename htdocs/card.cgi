@@ -22,13 +22,13 @@ my $price_name = uri_escape $card_ref->[2];
 # this craziness wraps the lines to 80 columns
 1 while $card_text =~ s/^(?=.{81})(.{0,80})( +.*)/$1\n              $2/m;
 
-my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, price, fprice FROM printings WHERE card_name = ? ORDER BY mid");
+my $printings_sth = $dbh->prepare("SELECT card_name, set_name, mid, sid, price, fprice FROM printings WHERE card_name = ? ORDER BY mid");
 $printings_sth->execute($card);
 my $html_safe_name = encode_entities($card, '\'<>&"');
 
 my $card_list;
 my $lowest_price = my $lowest_fprice = 0;
-while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings_sth->fetchrow_array) {
+while((my $card_name, my $set_name, my $mid, my $sid, my $price, my $fprice) = $printings_sth->fetchrow_array) {
     my $price_string = "";
     if($price != 0 && $fprice != 0) {
         $price_string = sprintf "\$%.2f / \$%.2f$star", $price, $fprice;
@@ -52,7 +52,7 @@ while((my $card_name, my $set_name, my $mid, my $price, my $fprice) = $printings
         }
     }
 
-    $card_list .= sprintf "<div class=\"cardpane2\"><img class=\"cardimage2\" src=\"%s\"><br />\n", image_handler($mid);
+    $card_list .= sprintf "<div class=\"cardpane2\"><img class=\"cardimage2\" src=\"%s\"><br />\n", image_handler($sid);
     $card_list .= sprintf "<span class=\"cardpane_price\">(%s)</span><span class=\"cardpane_set\" title=\"%s\">%s</span></div>\n", $price_string, $set_name, $set_name;
 }
 
