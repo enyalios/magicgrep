@@ -7,23 +7,13 @@ use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
 use URI::Escape;
+use YAML::XS 'LoadFile';
 
 my $header = generate_header('Lists');
-my $staples_file = "../local/staples.txt";
-my %staples;
+my $staples_file = "$Bin/../data/staples.yml";
 my $tag;
 
-open my $fh, "<", $staples_file or die;
-while(<$fh>) {
-    chomp;
-    next unless length $_;
-    
-    if(/^# (.*)$/) {
-        $tag = $1;
-    } else {
-        push @{$staples{$tag}}, $_;
-    }
-}
+my %staples = %{LoadFile($staples_file)};
 $staples{"Dual Lands"} = "";
 $staples{"Set Rares"} = "";
 
