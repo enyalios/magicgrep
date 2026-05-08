@@ -25,81 +25,6 @@ $| = 1;
 my $ua = LWP::UserAgent->new(agent => "Mozilla");
 sub get { return $ua->get($_[0])->decoded_content; }
 
-my %set_trans = (
-    "Magic 2010" => "Magic 2010 (M10)",
-    "Magic 2011" => "Magic 2011 (M11)",
-    "Magic 2012" => "Magic 2012 (M12)",
-    "Magic 2013" => "Magic 2013 (M13)",
-    "Magic 2014" => "Magic 2014 (M14)",
-    "Magic 2015" => "Magic 2015 (M15)",
-    "Limited Edition Alpha" => "Alpha Edition",
-    "Limited Edition Beta" => "Beta Edition",
-    "Time Spiral \"Timeshifted\"" => "Timeshifted",
-    "Prerelease Events" => "Prerelease Cards",
-    "Launch Parties" => "Launch Party %26 Release Event Promos",
-    "Release Events" => "Launch Party %26 Release Event Promos",
-    "Planechase 2012 Edition" => "Planechase 2012",
-    "Friday Night Magic" => "FNM Promos",
-    "Media Inserts" => "Media Promos",
-    "15th Anniversary" => "Media Promos",
-    "Dragon Con" => "Media Promos",
-    "Magic Game Day" => "Game Day Promos",
-    "Seventh Edition" => "7th Edition",
-    "Eighth Edition" => "8th Edition",
-    "Ninth Edition" => "9th Edition",
-    "Tenth Edition" => "10th Edition",
-    "Judge Gift Program" => "Judge Promos",
-    "International Collector's Edition" => "International Edition",
-    "Deckmasters" => "Deckmasters Garfield vs Finkel",
-    "Grand Prix" => "Grand Prix Promos",
-    "Magic: The Gathering-Commander" => "Commander",
-    "Duel Decks Anthology, Divine vs. Demonic" => "Duel Decks: Divine vs. Demonic",
-    "Magic: The Gathering--Conspiracy" => "Conspiracy",
-    "Commander 2011" => "Commander",
-    "Commander 2013 Edition" => "Commander 2013",
-    "Wizards Play Network" => "WPN %26 Gateway Promos",
-    "Gateway" => "WPN %26 Gateway Promos",
-    "Summer of Magic" => "WPN %26 Gateway Promos",
-    "Super Series" => "JSS/MSS Promos",
-    "Duel Decks Anthology, Jace vs. Chandra" => "Duel Decks: Anthology",
-    "Duel Decks Anthology, Elves vs. Goblins" => "Duel Decks: Anthology",
-    "Duel Decks Anthology, Garruk vs. Liliana" => "Duel Decks: Anthology",
-    "From the Vault: Annihilation (2014)" => "From the Vault: Annihilation",
-    "Coldsnap Theme Decks" => "Coldsnap Theme Deck Reprints",
-    "Pro Tour" => "Pro Tour Promos",
-    "Modern Event Deck 2014" => "Magic Modern Event Deck",
-    "Arena League" => "Arena Promos",
-    "Clash Pack" => "Unique and Miscellaneous Promos",
-    "Worlds" => "Judge Promos",
-    "World Magic Cup Qualifiers" => "WMCQ Promo Cards",
-    "Two-Headed Giant Tournament" => "Arena Promos",
-    "Happy Holidays" => "Special Occasion",
-    "Champs and States" => "Champs Promos",
-    "Ultimate Box Topper" => "Ultimate Masters: Box Toppers",
-    "Time Spiral Timeshifted" => "Timeshifted",
-    "Time Spiral Remastered" => "Time Spiral: Remastered",
-    "Forgotten Realms Commander" => "Commander: Adventures in the Forgotten Realms",
-    "Crimson Vow Commander" => "Commander: Innistrad: Crimson Vow",
-    "Midnight Hunt Commander" => "Commander: Innistrad: Midnight Hunt",
-    "Neon Dynasty Commander" => "Commander: Kamigawa: Neon Dynasty",
-    "Zendikar Rising Commander" => "Commander: Zendikar Rising",
-    "RNA Guild Kit" => "Ravnica Allegiance: Guild Kits",
-    "GRN Guild Kit" => "Guilds of Ravnica: Guild Kits",
-    "Kaldheim Commander" => "Commander: Kaldheim",
-    "Secret Lair Drop" => "Secret Lair Drop Series",
-    "Strixhaven Mystical Archive" => "Strixhaven: Mystical Archives",
-    "Kaladesh Inventions" => "Masterpiece Series: Kaladesh Inventions",
-    "Amonkhet Invocations" => "Masterpiece Series: Amonkhet Invocations",
-    "New Capenna Commander" => "Commander: Streets of New Capenna",
-    "Dominaria United Commander" => "Commander: Dominaria United",
-    "Warhammer 40,000 Commander" => "Universes Beyond: Warhammer 40,000",
-    "The Brothers' War Commander" => "Commander: The Brothers' War",
-    "Phyrexia: All Will Be One Commander" => "Commander: Phyrexia: All Will Be One",
-    "March of the Machine Commander" => "Commander: March of the Machine",
-    "The Lord of the Rings: Tales of Middle-earth" => "Universes Beyond: The Lord of the Rings: Tales of Middle-earth",
-    "Tales of Middle-earth Commander" => "Commander: The Lord of the Rings: Tales of Middle-earth",
-);
-
 sub uniq {
     my %seen;
     return grep { !$seen{$_}++ } @_;
@@ -392,18 +317,9 @@ for my $set_code (keys %$tree) {
             $cards{$name}{price} = min($cards{$name}{price}, $prices{$card->{uuid}}{normal}, $prices{$card->{uuid}}{foil});
         }
         unless($tree->{$set_code}->{isOnlineOnly}) {
-            my $set = $set_name;
-            $set = $set_trans{$set} if $set_trans{$set};
-            if($cards{$name}{simple_type} =~ /^(Scheme|Plane|Phenomenon)$/) {
-                $cards{$name}{price_name} = "$name ($set)";
-                $set = "Oversize Cards";
-            }
-            my $mid = $card->{identifiers}->{multiverseId};
-            $mid = 0 unless defined $mid;
-            my $sid = $card->{identifiers}->{scryfallId};
-            $sid = 0 unless defined $sid;
-            my $jsonid = $card->{uuid};
-            push @by_set, [ $name, $cards{$name}{price_name}, $set, $mid, $sid, $jsonid, $set_release ];
+            my $mid = $card->{identifiers}->{multiverseId} // 0;
+            my $sid = $card->{identifiers}->{scryfallId} // 0;
+            push @by_set, [ $name, $cards{$name}{price_name}, $set_name, $mid, $sid, $card->{uuid}, $set_release ];
         }
     }
 }
