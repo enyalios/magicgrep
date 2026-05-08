@@ -90,3 +90,5 @@ added the ability to return search results as only text
 added the field gamechanger
 figure out why the search field doesnt match the url sometimes when you use the back button
 use scryfall ids for images in card.cgi
+add a field for short set codes
+make special guest cards show up as being in the set they are printed in

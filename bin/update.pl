@@ -12,13 +12,14 @@ use FindBin '$Bin';
 use lib "$Bin/../lib";
 use Magic;
 use utf8;
+use YAML::XS 'LoadFile';
 
 # tweak this depending on where you want to store your data
 my $printings_url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
 my $prices_url = "https://mtgjson.com/api/v5/AllPricesToday.json.bz2";
 my $version_url = "https://mtgjson.com/api/v5/Meta.json";
 my $version_file = "$Bin/../db/version.txt";
-my $special_guest_file = "$Bin/../special_guest.txt";
+my $special_guest_file = "$Bin/../data/special_guest.yml";
 $| = 1;
 
 my $ua = LWP::UserAgent->new(agent => "Mozilla");
@@ -250,12 +251,11 @@ sub min {
 }
 
 sub special_guest_sets {
-    open my $fh, "<", $special_guest_file or die;
     my %sg;
-    while(<$fh>) {
-        if(/^(\w.+?)  +(\w.+?)  +(\w.+)$/) {
-            $sg{$1}{set} = $2;
-            $sg{$1}{code} = $3;
+    for(@{LoadFile($special_guest_file)}) {
+        for my $card (@{$_->{cards}}) {
+            $sg{$card}{set} = $_->{set};
+            $sg{$card}{code} = $_->{code};
         }
     }
     return %sg;

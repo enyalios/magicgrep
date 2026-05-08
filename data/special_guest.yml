@@ -1,0 +1,176 @@
+---
+- set: The Lost Caverns of Ixalan
+  code: LCI
+  cards:
+    - Lord of Atlantis
+    - Malcolm, Keen-Eyed Navigator
+    - Bridge from Below
+    - Mephidross Vampire
+    - Pitiless Plunderer
+    - Breeches, Brazen Plunderer
+    - Dargo, the Shipwrecker
+    - Rampaging Ferocidon
+    - Underworld Breach
+    - Carnage Tyrant
+    - Ghalta, Primal Hunger
+    - Polyraptor
+    - Kalamax, the Stormsire
+    - Lord Windgrace
+    - Mirri, Weatherlight Duelist
+    - Thrasios, Triton Hero
+    - Mana Crypt
+    - Star Compass
+- set: Murders at Karlov Manor
+  code: MKM
+  cards:
+    - Ghostly Prison
+    - Fabricate
+    - Show and Tell
+    - Tragic Slip
+    - Victimize
+    - Gamble
+    - Crashing Footfalls
+    - Tireless Tracker
+    - Drown in the Loch
+    - Field of the Dead
+- set: Outlaws of Thunder Junction
+  code: OTJ
+  cards:
+    - Stoneforge Mystic
+    - Brazen Borrower
+    - Desertion
+    - Morbid Opportunist
+    - Port Razer
+    - Scapeshift
+    - Mystic Snake
+    - Notion Thief
+    - Desert
+    - Prismatic Vista
+- set: Modern Horizons 3
+  code: MH3
+  cards:
+    - Thought-Knot Seer
+    - Prismatic Ending
+    - Dismember
+    - Persist
+    - Expressive Iteration
+    - Solitude
+    - Subtlety
+    - Grief
+    - Fury
+    - Endurance
+- set: Bloomburrow
+  code: BLB
+  cards:
+    - Swords to Plowshares
+    - Ledger Shredder
+    - Rat Colony
+    - Relentless Rats
+    - Kindred Charge
+    - Sylvan Tutor
+    - Toski, Bearer of Secrets
+    - Frogmite
+    - Sword of Fire and Ice
+    - Secluded Courtyard
+- set: "Duskmourn: House of Horror"
+  code: DSK
+  cards:
+    - Hallowed Haunting
+    - Soul Warden
+    - Expropriate
+    - Phantasmal Image
+    - Damnation
+    - Sacrifice
+    - Maddening Hex
+    - Unholy Heat
+    - Collected Company
+    - Noxious Revival
+- set: Foundations
+  code: FDN
+  cards:
+    - Condemn
+    - Sphinx's Tutelage
+    - Grim Tutor
+    - Embercleave
+    - Goblin Bushwhacker
+    - Bloom Tender
+    - Paradise Druid
+    - Akroma's Memorial
+    - Temporal Manipulation
+    - Fiend Artisan
+- set: Aetherdrift
+  code: DFT
+  cards:
+    - Cavalier of Dawn
+    - Thoughtcast
+    - Whir of Invention
+    - Bone Miser
+    - Lord of the Undead
+    - Chandra's Ignition
+    - Galvanic Blast
+    - Pathbreaker Ibex
+    - Chrome Mox
+    - Skysovereign, Consul Flagship
+- set: "Tarkir: Dragonstorm"
+  code: TDM
+  cards:
+    - Eerie Ultimatum
+    - Emergent Ultimatum
+    - Genesis Ultimatum
+    - Inspired Ultimatum
+    - Ruinous Ultimatum
+    - Arid Mesa
+    - Marsh Flats
+    - Misty Rainforest
+    - Scalding Tarn
+    - Verdant Catacombs
+- set: Edge of Eternities
+  code: EOE
+  cards:
+    - Warping Wail
+    - Deafening Silence
+    - Robe of Stars
+    - Nexus of Fate
+    - Paradox Haze
+    - Darkness
+    - Magus of the Moon
+    - Burgeoning
+    - Green Sun's Zenith
+    - Sliver Overlord
+- set: Lorwyn Eclipsed 
+  code: ECL
+  cards:
+    - Bitterblossom
+    - Devoted Druid
+    - Dolmen Gate
+    - Door of Destinies
+    - Faerie Macabre
+    - Goblin Chieftain
+    - Goblin Sharpshooter
+    - Heat Shimmer
+    - Helix Pinnacle
+    - Idyllic Tutor
+    - Kinsbaile Cavalier
+    - Leaf-Crowned Visionary
+    - Manamorphose
+    - Mistbind Clique
+    - Painter's Servant
+    - Regal Force
+    - Risen Reef
+    - Slippery Bogle
+    - Thousand-Year Elixir
+    - Wanderwine Prophets
+- set: Secrets of Strixhaven
+  code: SOS
+  cards:
+    - Archaeomancer
+    - Archmage Emeritus
+    - Murmuring Mystic
+    - Grim Haruspex
+    - Dualcaster Mage
+    - Magus of the Library
+    - Sylvan Library
+    - Adrix and Nev, Twincasters
+    - Codie, Vociferous Codex
+    - Library of Alexandria
+    - Library of Leng
