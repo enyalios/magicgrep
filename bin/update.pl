@@ -18,6 +18,7 @@ my $printings_url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
 my $prices_url = "https://mtgjson.com/api/v5/AllPricesToday.json.bz2";
 my $version_url = "https://mtgjson.com/api/v5/Meta.json";
 my $version_file = "$Bin/../db/version.txt";
+my $special_guest_file = "$Bin/../special_guest.txt";
 $| = 1;
 
 my $ua = LWP::UserAgent->new(agent => "Mozilla");
@@ -248,12 +249,25 @@ sub min {
     return $array[0];
 }
 
+sub special_guest_sets {
+    open my $fh, "<", $special_guest_file or die;
+    my %sg;
+    while(<$fh>) {
+        if(/^(\w.+?)  +(\w.+?)  +(\w.+)$/) {
+            $sg{$1}{set} = $2;
+            $sg{$1}{code} = $3;
+        }
+    }
+    return %sg;
+}
+
 
 my $num_cards = "0";
 
 check_version();
 
-my (%cards, @by_set, $tree);
+my (%cards, @by_set, $tree, %sg_set);
+%sg_set = special_guest_sets();
 
 print "downloading price data...\n";
 $tree = download_and_parse($prices_url);
@@ -344,7 +358,14 @@ for my $set_code (keys %$tree) {
             $cards{$name}{size}  = $card->{power} . "/" . $card->{toughness};
         }
         $cards{$name}{text} = $card->{text};
-        push @{$cards{$name}{set}}, [ $set_release, $set_name . " " . $card->{rarity} ];
+        my $set_rarity_string = $set_name . " " . $card->{rarity};
+        my $set_rarity_code = $card->{setCode} . "-" . uc substr($card->{rarity},0,1);
+        if($set_name eq "Special Guests") {
+            $set_rarity_string = ($sg_set{$name}{set} // "Unidentified") . " special guest";
+            $set_rarity_code   = ($sg_set{$name}{code} // "???") . "-G";
+        }
+        push @{$cards{$name}{set}}, [ $set_release, $set_rarity_string ];
+        push @{$cards{$name}{setcode}}, [ $set_release, $set_rarity_code ];
         $cards{$name}{cmc}  = $card->{convertedManaCost};
         $cards{$name}{cid} = color_array_to_sorted_string($card->{colorIdentity}) if defined $card->{colorIdentity};
         $cards{$name}{color} = color_array_to_sorted_string($card->{colors}) if defined $card->{colors};
@@ -427,6 +448,7 @@ for(sort keys %cards) {
     $fulltext .= "Rules Text:  $card{text}";
     $fulltext .= "\n";
     $fulltext .= "Set/Rarity:  " . join(", ", uniq map { $_->[1] } sort { $a->[0] cmp $b->[0] } @{$card{set}}) . "\n";
+    $fulltext .= "Set Code:    " . join(", ", uniq map { $_->[1] } sort { $a->[0] cmp $b->[0] } @{$card{setcode}}) . "\n";
     $fulltext .= "Legality:    $card{legal}\n";
     $fulltext .= "Reserved:    True\n" if defined $card{reserved};
     $fulltext .= "Timeshifted: True\n" if defined $card{timeshifted};
