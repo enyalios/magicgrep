@@ -274,7 +274,7 @@ for my $set_code (keys %$tree) {
         }
         $cards{$name}{name} = $name;
         $cards{$name}{simple_name} = unidecode($name);
-        $cards{$name}{art_name} = $card->{identifiers}->{scryfallId} // 0;
+        $cards{$name}{art_name} = $card->{identifiers}->{scryfallId} if $card->{language} eq "English";
         $cards{$name}{price_name} //= $name;
         $cards{$name}{cost} = $card->{manaCost};
         $cards{$name}{type_line} = $card->{type};
