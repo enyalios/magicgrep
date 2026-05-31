@@ -13,6 +13,7 @@ use lib "$Bin/../lib";
 use Magic;
 use utf8;
 use YAML::XS 'LoadFile';
+use Getopt::Long;
 
 # tweak this depending on where you want to store your data
 my $printings_url = "https://mtgjson.com/api/v5/AllPrintings.json.bz2";
@@ -21,6 +22,13 @@ my $version_url = "https://mtgjson.com/api/v5/Meta.json";
 my $version_file = "$Bin/../db/version.txt";
 my $special_guest_file = "$Bin/../data/special_guest.yml";
 $| = 1;
+
+my $quiet = 0;
+my $force = 0;
+GetOptions(
+    "quiet|q" => \$quiet,
+    "force|f" => \$force,
+) or die("Error in command line arguments\n");
 
 my $ua = LWP::UserAgent->new(agent => "Mozilla");
 sub get { return $ua->get($_[0])->decoded_content; }
@@ -48,11 +56,11 @@ sub check_version {
     }
     chomp(my $remote_version = decode_json(get $version_url)->{data}->{version});
     if($local_version eq $remote_version ) {
-        if(!defined $ARGV[0] || $ARGV[0] ne "-f") {
-            print "mtgjson version hasn't changed, exiting\n";
-            exit;
+        if($force) {
+            print "forcing update\n" unless $quiet;
         } else {
-            print "forcing update\n";
+            print "mtgjson version hasn't changed, exiting\n" unless $quiet;
+            exit;
         }
     }
     if(defined $remote_version) {
@@ -160,12 +168,12 @@ sub download_and_parse {
     $localpath =~ s/.*\//\/var\/www\/local\//;
     my $blob;
     if(-e $localpath) {
-        print "using local copy of $localpath\n";
+        print "using local copy of $localpath\n" unless $quiet;
         $blob = join "", `bzcat $localpath`;
     } else {
         $blob = join "", `wget $quiet -O - "$url" | bzcat`;
     }
-    print "parsing...\n";
+    print "parsing...\n" unless $quiet;
     my $tree = decode_json($blob);
     return $tree
 }
@@ -194,7 +202,7 @@ check_version();
 my (%cards, @by_set, $tree, %sg_set);
 %sg_set = special_guest_sets();
 
-print "downloading price data...\n";
+print "downloading price data...\n" unless $quiet;
 $tree = download_and_parse($prices_url);
 my $date = $tree->{meta}->{date};
 $tree = $tree->{data};
@@ -204,7 +212,7 @@ for my $uuid (keys %$tree) {
     $prices{$uuid}{foil}   = $tree->{$uuid}->{paper}->{tcgplayer}->{retail}->{foil}->{$date};
 }
 
-print "downloading card data...\n";
+print "downloading card data...\n" unless $quiet;
 $tree = download_and_parse($printings_url)->{data};
 for my $set_code (keys %$tree) {
     my $set_name = $tree->{$set_code}->{name};
@@ -324,7 +332,7 @@ for my $set_code (keys %$tree) {
     }
 }
 
-print "inserting cards...\n";
+print "inserting cards...\n" unless $quiet;
 my $dbh = get_db_handle();
 my $sth = $dbh->prepare("INSERT OR REPLACE INTO cards (name, cmc, color, type, date, full_text, art_name, price_name, price, stale) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
 $dbh->do("BEGIN TRANSACTION");
@@ -376,7 +384,7 @@ for(sort keys %cards) {
 #print "\n";
 $dbh->do("COMMIT");
 
-print "inserting sets...\n";
+print "inserting sets...\n" unless $quiet;
 $sth = $dbh->prepare("INSERT OR REPLACE INTO printings (card_name, price_name, set_name, mid, sid, jsonid, date, price, fprice) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $dbh->do("BEGIN TRANSACTION");
 $dbh->do("UPDATE printings SET stale = 1");
@@ -385,10 +393,10 @@ $dbh->do("UPDATE printings SET stale = 0 WHERE card_name = ? AND set_name = ? AN
 $dbh->do("COMMIT");
 
 (my $stale) = $dbh->selectrow_array("SELECT count(*) FROM cards WHERE stale = 1");
-print "deleted $stale stale card(s)\n" if $stale;
+print "deleted $stale stale card(s)\n" if $stale && !$quiet;
 $dbh->do("DELETE FROM cards WHERE stale = 1");
 ($stale) = $dbh->selectrow_array("SELECT count(*) FROM printings WHERE stale = 1");
-print "deleted $stale stale printing(s)\n" if $stale;
+print "deleted $stale stale printing(s)\n" if $stale && !$quiet;
 $dbh->do("DELETE FROM printings WHERE stale = 1");
 
 $dbh->disconnect;
