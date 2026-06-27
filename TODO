@@ -15,6 +15,8 @@ confirm that magic online only printings arent showing up
 add the ability to search for specific printings not just all printings of a card
 make the alchemy cards not show up
 make the ui work better on mobile
+card image is always the front face even when it should be the back of the card
+ability to show another card on hovering a link (like for a related card or other face)
 
 # completed
 make the url update as you search
